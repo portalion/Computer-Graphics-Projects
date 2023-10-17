@@ -1,6 +1,10 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "imgui/imgui.h"
+#include "imgui/backends/imgui_impl_glfw.h"
+#include "imgui/backends/imgui_impl_opengl3.h"
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -46,14 +50,25 @@ int main(void)
     if (glewInit() != GLEW_OK)
         std::cout << "GLEW ERROR" << std::endl;
 
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(window, true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
+    ImGui_ImplOpenGL3_Init();
+
     std::cout << glGetString(GL_VERSION) << std::endl;
     {
         float positions[] =
         {
-            -0.5f, -0.5f, 0.f, 0.f,
-             0.5f, -0.5f, 1.f, 0.f,
-             0.5f,  0.5f, 1.f, 1.f,
-            -0.5f,  0.5f, 0.f, 1.f
+            100.0f, 100.0f, 0.f, 0.f,
+            200.0f, 100.0f, 1.f, 0.f,
+            200.0f, 200.0f, 1.f, 1.f,
+            100.0f, 200.0f, 0.f, 1.f
         };
 
         unsigned int indices[] =
@@ -75,13 +90,17 @@ int main(void)
 
         IndexBuffer ib(indices, 6);
 
-        glm::mat4 proj = glm::ortho(-1.0f, 1.0f, -0.75f, 0.75f, -0.5f, 0.5f);
+        glm::mat4 proj = glm::ortho(-0.f, 1024.f, 0.f, 768.f, -1.f, 1.f);
+        glm::mat4 view = glm::translate(glm::mat4(1.f), glm::vec3(-100, 0, 0));
+        glm::mat4 model = glm::translate(glm::mat4(1.f), glm::vec3(200, 200, 0));
+
+        glm::mat4 mvp = proj * view * model;
 
         Shader shader("res/shaders/Basic.shader");
         shader.Bind();
 
         shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
-        shader.SetUniformMat4f("u_MVP", proj);
+        shader.SetUniformMat4f("u_MVP", mvp);
 
         Texture texture("res/textures/texture.png");
         texture.Bind();
@@ -100,6 +119,11 @@ int main(void)
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
         {
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+            ImGui::ShowDemoWindow(); // Show demo window! :)
+
             /* Render here */
             renderer.Clear();
 
@@ -111,6 +135,9 @@ int main(void)
             g = (sin(glfwGetTime()) + cos(glfwGetTime())) / 2.f;
             b = sin(glfwGetTime());
 
+
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
             /* Swap front and back buffers */
             glfwSwapBuffers(window);
 
@@ -118,6 +145,12 @@ int main(void)
             glfwPollEvents();
         }
     }
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
+    glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
 }
