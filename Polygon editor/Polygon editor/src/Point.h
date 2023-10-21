@@ -1,5 +1,4 @@
 #pragma once
-
 #include <glm/glm.hpp>
 #include <vector>
 
@@ -16,11 +15,17 @@ private:
 	static std::vector<unsigned int> m_Indices;
 
 	static void GenerateVertices();
-public:
-	Point(float x, float y);
+
 	float x;
 	float y;
 
+	void UpdateMatrices();
+public:
+	Point(float x, float y);
+	glm::mat4 model;
+
+	void SetPosition(float x, float y);
 	void Draw();
+	void DisplayMenu();
 };
 

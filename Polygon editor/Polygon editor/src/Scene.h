@@ -6,15 +6,22 @@
 
 #include "Utils.h"
 #include "Shader.h"
+#include "Point.h"
 
 class Scene
 {
 private:
 	static Scene* m_Instance;
 
-	Shader* shader;
+	Shader* m_Shader;
+	glm::mat4 m_Projection;
+	std::vector<Point> m_Points;
 
-	glm::mat4 proj;
+	Point* m_ExpectedPointPosition;
+	int m_ActivePointIndex = 0;
+	bool m_IsCursorVisible;
+
+	void AddNewPoint(float x, float y);
 
 	void Init();
 	void Draw();
@@ -23,7 +30,9 @@ public:
 	static const int m_Height = 768;
 	
 	GLFWwindow* window;
-	
+
+	~Scene();
+
 	void Run();
 
 	static Scene* GetInstance();

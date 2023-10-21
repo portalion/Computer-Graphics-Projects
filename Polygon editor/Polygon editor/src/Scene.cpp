@@ -7,16 +7,21 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-#include "Point.h"
-
 Scene* Scene::m_Instance = nullptr;
 
+void Scene::AddNewPoint(float x, float y)
+{
+    m_Points.push_back(Point(x, y));
+    m_ActivePointIndex++;
+}
 
 void Scene::Init()
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
+    io.IniFilename = nullptr;
+    io.LogFilename = nullptr;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
@@ -26,69 +31,56 @@ void Scene::Init()
     ImGui_ImplOpenGL3_Init();
 
     std::cout << glGetString(GL_VERSION) << std::endl;
+
+    m_Projection = glm::ortho(0.f, static_cast<float>(m_Width), 0.f, static_cast<float>(m_Height));
+
+    m_ExpectedPointPosition = new Point(0, 0);
 }
 
 void Scene::Draw()
 {
-    float positions[] =
+    m_Shader->SetUniform4f("u_Color", 0.5f, 0.5f, 0.5f, 1.f);
+    for (int i = 0; i < m_Points.size(); i++)
     {
-        100.0f, 100.0f, 
-        200.0f, 100.0f, 
-        200.0f, 200.0f, 
-        ImGui::GetIO().MousePos.x,  m_Height - ImGui::GetIO().MousePos.y
-    };
+        m_Shader->SetUniformMat4f("u_MVP", m_Projection * m_Points[i].model);
+        if (i == m_ActivePointIndex)
+        {
+            m_Shader->SetUniform4f("u_Color", 0.f, 1.f, 0.f, 1.f);
+            m_Points[i].Draw();
+            m_Shader->SetUniform4f("u_Color", 0.5f, 0.5f, 0.5f, 1.f);
+        }
+        else m_Points[i].Draw();
+    }
 
-    unsigned int indices[] =
+    if (m_IsCursorVisible)
     {
-        0, 1, 2,
-        2, 3, 0
-    };
+        m_Shader->SetUniformMat4f("u_MVP", m_Projection * m_ExpectedPointPosition->model);
+        m_ExpectedPointPosition->Draw();
+    }
 
-    unsigned int vao;
-    GLCall(glGenVertexArrays(1, &vao));
-    GLCall(glBindVertexArray(vao));
+    m_Points[m_ActivePointIndex].DisplayMenu();
+}
 
-    unsigned int buffer;
-    GLCall(glGenBuffers(1, &buffer));
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer));
-    GLCall(glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), positions, GL_STATIC_DRAW));
-
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
-    glEnableVertexAttribArray(0);
-
-    unsigned int ibo;
-    glGenBuffers(1, &ibo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
-
-    GLCall(glBindVertexArray(vao));
-
-    GLCall(glDrawElements(GL_LINE_STRIP, 6, GL_UNSIGNED_INT, nullptr));
-
-
-    shader->Bind();
+Scene::~Scene()
+{
+    delete m_ExpectedPointPosition;
 }
 
 void Scene::Run()
 {
     Init();
 
-    shader = new Shader("res/shaders/Basic.shader");
-    shader->Bind();
-    shader->SetUniform4f("u_Color", 0.f, 1.f, 0.f, 1.0f);
-    shader->SetUniformMat4f("u_MVP", glm::ortho(0.f, static_cast<float>(m_Width), 0.f, static_cast<float>(m_Height)));
+    m_Shader = new Shader("res/shaders/Basic.shader");
+    m_Shader->Bind();
+    m_Shader->SetUniform4f("u_Color", 0.f, 1.f, 0.f, 1.0f);
 
-    GLCall(glBindVertexArray(0));
-    //shader->Unbind();
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
-    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
-
-    
+    m_Points.push_back(Point(100.f, 100.f));
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
+        GLCall(glClearColor(0.1f, 0.2f, 0.2f, 1.0f));
         GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
         ImGui_ImplOpenGL3_NewFrame();
@@ -96,9 +88,14 @@ void Scene::Run()
         ImGui::NewFrame();
         ImGui::ShowDemoWindow(); // Show demo window! :)
         
-        Point test(100.f, 100.f);
+        auto& io = ImGui::GetIO();
+        if(!ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+            AddNewPoint(io.MousePos.x, m_Height - io.MousePos.y);
+
+        m_ExpectedPointPosition->SetPosition(io.MousePos.x, m_Height - io.MousePos.y);
+        m_IsCursorVisible = !ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow);
+
         Draw();
-        test.Draw();
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
