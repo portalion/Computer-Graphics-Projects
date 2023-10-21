@@ -81,6 +81,7 @@ void Scene::Run()
     m_Shader->SetUniform4f("u_Color", 0.f, 1.f, 0.f, 1.0f);
 
     AddNewPoint(0, 0);
+    Line test({ 0.f, 0.f }, { 50.f, 50.f });
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -105,6 +106,7 @@ void Scene::Run()
             RemovePoint(m_ActivePointIndex);
 
         Draw();
+        test.Draw();
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

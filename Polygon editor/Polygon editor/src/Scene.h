@@ -7,6 +7,7 @@
 #include "Utils.h"
 #include "Shader.h"
 #include "Point.h"
+#include "Line.h"
 
 class Scene
 {

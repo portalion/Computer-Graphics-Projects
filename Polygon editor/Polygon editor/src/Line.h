@@ -9,13 +9,10 @@ struct Vertex
 class Line
 {
 private:
-	static const int vertexSize = 2;
-	
-	unsigned int vao;
-	unsigned int vbo;
-	unsigned int ibo;
+	unsigned int m_Vao;
+	unsigned int m_Vbo;
 
-	float vertices[vertexSize * 2];
+	float m_Vertices[4];
 public:
 	Line(Vertex v1, Vertex v2);
 
