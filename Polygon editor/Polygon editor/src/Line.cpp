@@ -41,6 +41,14 @@ Line::Line(Vertex v1, Vertex v2)
 	SetPosition(v1, v2);
 }
 
+Line::Line(Point* first, Point* second)
+{
+	if (m_Vbo == 0 || m_Vao == 0)
+		GenerateModel();
+
+	BindPoint(first, second);
+}
+
 void Line::SetPosition(Vertex v1, Vertex v2)
 {
 	model = glm::mat4(1.f);
@@ -48,6 +56,12 @@ void Line::SetPosition(Vertex v1, Vertex v2)
 	model = glm::translate(model, glm::vec3(v1.x, v1.y, 0.f));
 	model = glm::rotate(model, angle, glm::vec3(0.f, 0.f, 1.f));
 	model = glm::scale(model, glm::vec3(glm::length(glm::vec2(v2.x - v1.x, v2.y - v1.y)), 1.f, 1.f));
+}
+
+void Line::UpdateBasedOnPointsBinded()
+{
+	if (points[0]->Moved() || points[1]->Moved())
+		UpdatePositionBasedOnPoints();
 }
 
 void Line::Draw()

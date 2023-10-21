@@ -11,14 +11,14 @@ Scene* Scene::m_Instance = nullptr;
 
 void Scene::AddNewPoint(float x, float y)
 {
-    m_Points.push_back(Point(x, y));
+    m_Points.push_back(new Point(x, y));
     m_ActivePointIndex++;
 
     if (m_Points.size() > 1)
     {
         if(!m_Lines.empty())m_Lines.pop_back();
-        m_Lines.push_back(Line(m_Points[m_ActivePointIndex].GetPosition(), m_Points[m_ActivePointIndex - 1].GetPosition()));
-        m_Lines.push_back(Line(m_Points[0].GetPosition(), m_Points[m_ActivePointIndex].GetPosition()));
+        m_Lines.push_back(Line(m_Points[m_ActivePointIndex], m_Points[m_ActivePointIndex - 1]));
+        m_Lines.push_back(Line(m_Points[0], m_Points[m_ActivePointIndex]));
     }
 }
 
@@ -28,7 +28,7 @@ void Scene::RemovePoint(int index)
     m_Lines.pop_back();
     m_Lines.pop_back();
     m_ActivePointIndex--;
-    m_Lines.push_back(Line(m_Points[0].GetPosition(), m_Points[m_ActivePointIndex].GetPosition()));
+    m_Lines.push_back(Line(m_Points[0], m_Points[m_ActivePointIndex]));
 }
 
 void Scene::Init()
@@ -59,14 +59,14 @@ void Scene::Draw()
     m_Shader->SetUniform4f("u_Color", 0.5f, 0.5f, 0.5f, 1.f);
     for (int i = 0; i < m_Points.size(); i++)
     {
-        m_Shader->SetUniformMat4f("u_MVP", m_Projection * m_Points[i].model);
+        m_Shader->SetUniformMat4f("u_MVP", m_Projection * m_Points[i]->model);
         if (i == m_ActivePointIndex)
         {
             m_Shader->SetUniform4f("u_Color", 0.f, 1.f, 0.f, 1.f);
-            m_Points[i].Draw();
+            m_Points[i]->Draw();
             m_Shader->SetUniform4f("u_Color", 0.5f, 0.5f, 0.5f, 1.f);
         }
-        else m_Points[i].Draw();
+        else m_Points[i]->Draw();
     }
     m_Shader->SetUniform4f("u_Color", 0.f, 1.f, 0.f, 1.f);
     for (int i = 0; i < m_Lines.size(); i++)
@@ -85,7 +85,7 @@ void Scene::Draw()
         m_ExpectedLinePositions[1].Draw();
     }
 
-    m_Points[m_ActivePointIndex].DisplayMenu();
+    m_Points[m_ActivePointIndex]->DisplayMenu();
 }
 
 Scene::~Scene()
@@ -124,12 +124,15 @@ void Scene::Run()
         Vertex CurrentMousePos = { io.MousePos.x, m_Height - io.MousePos.y };
 
         m_ExpectedPointPosition->SetPosition(CurrentMousePos);
-        m_ExpectedLinePositions[0].SetPosition(m_Points[0].GetPosition(), CurrentMousePos);
-        m_ExpectedLinePositions[1].SetPosition(m_Points[m_ActivePointIndex].GetPosition(), CurrentMousePos);
+        m_ExpectedLinePositions[0].SetPosition(m_Points[0]->GetPosition(), CurrentMousePos);
+        m_ExpectedLinePositions[1].SetPosition(m_Points[m_ActivePointIndex]->GetPosition(), CurrentMousePos);
         m_IsCursorVisible = !ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow);
 
-        if (m_Points[m_ActivePointIndex].ShouldRemove())
+        if (m_Points[m_ActivePointIndex]->ShouldRemove())
             RemovePoint(m_ActivePointIndex);
+
+        for (auto& line : m_Lines)
+            line.UpdateBasedOnPointsBinded();
 
         Draw();
 ;
@@ -143,6 +146,9 @@ void Scene::Run()
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+
+    for (auto& point : m_Points)
+        delete point;
 }
 
 Scene* Scene::GetInstance()

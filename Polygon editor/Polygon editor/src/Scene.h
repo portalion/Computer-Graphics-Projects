@@ -16,7 +16,7 @@ private:
 
 	Shader* m_Shader;
 	glm::mat4 m_Projection;
-	std::vector<Point> m_Points;
+	std::vector<Point*> m_Points;
 	std::vector<Line> m_Lines;
 
 	Point* m_ExpectedPointPosition;

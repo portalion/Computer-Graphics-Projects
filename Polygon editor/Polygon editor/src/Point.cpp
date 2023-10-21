@@ -56,7 +56,7 @@ void Point::GenerateVertices()
 }
 
 Point::Point(float x, float y)
-	:model(glm::mat4(1.f)), m_Remove{false}
+	:model(glm::mat4(1.f)), m_Remove{false}, m_Moved{false}
 {
 	if(m_Vao == 0 || m_Vbo == 0 || m_Ibo == 0)
 		GenerateVertices();
@@ -84,9 +84,9 @@ void Point::DisplayMenu()
 		return;
 	}
 	ImGui::PushItemWidth(80);
-	bool changed = ImGui::SliderFloat("X", &x, 0.0f, Scene::m_Width); ImGui::SameLine();
-	changed = ImGui::SliderFloat("Y", &y, 0.0f, Scene::m_Height) || changed;
-	if (changed) UpdateMatrices();
+	m_Moved = ImGui::SliderFloat("X", &x, 0.0f, Scene::m_Width); ImGui::SameLine();
+	m_Moved = ImGui::SliderFloat("Y", &y, 0.0f, Scene::m_Height) || m_Moved;
+	if (m_Moved) UpdateMatrices();
 
 	m_Remove = ImGui::Button("Remove Vertex");
 

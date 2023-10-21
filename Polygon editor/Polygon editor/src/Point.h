@@ -19,6 +19,7 @@ private:
 	static void GenerateVertices();
 
 	bool m_Remove;
+	bool m_Moved;
 
 	float x;
 	float y;
@@ -29,6 +30,7 @@ public:
 	glm::mat4 model;
 
 	inline const bool ShouldRemove() const { return m_Remove; }
+	inline const bool Moved() const { return m_Moved; }
 
 	Vertex GetPosition();
 	void SetPosition(float x, float y);
