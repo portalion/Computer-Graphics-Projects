@@ -1,21 +1,21 @@
 #pragma once
-
-struct Vertex
-{
-	float x;
-	float y;
-};
+#include <glm/glm.hpp>
+#include "Utils.h"
 
 class Line
 {
 private:
-	unsigned int m_Vao;
-	unsigned int m_Vbo;
+	static unsigned int m_Vao;
+	static unsigned int m_Vbo;
 
-	float m_Vertices[4];
+	static float m_Vertices[4];
+
+	static void GenerateModel();
 public:
-	Line(Vertex v1, Vertex v2);
+	Line(Vertex v1 = { 0.f, 0.f }, Vertex v2 = { 0.f, 0.f });
+	glm::mat4 model;
 
+	void SetPosition(Vertex v1, Vertex v2);
 	void Draw();
 };
 

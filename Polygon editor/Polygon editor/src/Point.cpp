@@ -85,7 +85,7 @@ void Point::DisplayMenu()
 	}
 	ImGui::PushItemWidth(80);
 	bool changed = ImGui::SliderFloat("X", &x, 0.0f, Scene::m_Width); ImGui::SameLine();
-	changed = changed || ImGui::SliderFloat("Y", &y, 0.0f, Scene::m_Height);
+	changed = ImGui::SliderFloat("Y", &y, 0.0f, Scene::m_Height) || changed;
 	if (changed) UpdateMatrices();
 
 	m_Remove = ImGui::Button("Remove Vertex");
@@ -99,4 +99,14 @@ void Point::SetPosition(float x, float y)
 	this->x = x;
 	this->y = y;
 	UpdateMatrices();
+}
+
+void Point::SetPosition(Vertex position)
+{
+	this->SetPosition(position.x, position.y);
+}
+
+Vertex Point::GetPosition()
+{
+	return { x, y };
 }

@@ -17,8 +17,10 @@ private:
 	Shader* m_Shader;
 	glm::mat4 m_Projection;
 	std::vector<Point> m_Points;
+	std::vector<Line> m_Lines;
 
 	Point* m_ExpectedPointPosition;
+	Line* m_ExpectedLinePositions;
 	int m_ActivePointIndex = -1;
 	bool m_IsCursorVisible;
 

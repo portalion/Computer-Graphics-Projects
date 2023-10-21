@@ -10,3 +10,9 @@
 void GLClearError();
 
 bool GLLogCall(const char* function, const char* file, int line);
+
+struct Vertex
+{
+	float x;
+	float y;
+};

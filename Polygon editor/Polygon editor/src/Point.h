@@ -2,6 +2,8 @@
 #include <glm/glm.hpp>
 #include <vector>
 
+struct Vertex;
+
 class Point
 {
 private:
@@ -28,7 +30,9 @@ public:
 
 	inline const bool ShouldRemove() const { return m_Remove; }
 
+	Vertex GetPosition();
 	void SetPosition(float x, float y);
+	void SetPosition(Vertex position);
 	void Draw();
 	void DisplayMenu();
 };
