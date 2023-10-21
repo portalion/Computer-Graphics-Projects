@@ -16,6 +16,8 @@ private:
 
 	static void GenerateVertices();
 
+	bool m_Remove;
+
 	float x;
 	float y;
 
@@ -23,6 +25,8 @@ private:
 public:
 	Point(float x, float y);
 	glm::mat4 model;
+
+	inline const bool ShouldRemove() const { return m_Remove; }
 
 	void SetPosition(float x, float y);
 	void Draw();

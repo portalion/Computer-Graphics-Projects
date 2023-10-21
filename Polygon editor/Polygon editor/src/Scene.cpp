@@ -15,6 +15,12 @@ void Scene::AddNewPoint(float x, float y)
     m_ActivePointIndex++;
 }
 
+void Scene::RemovePoint(int index)
+{
+    m_Points.erase(m_Points.begin() + index);
+    m_ActivePointIndex--;
+}
+
 void Scene::Init()
 {
     IMGUI_CHECKVERSION();
@@ -74,7 +80,7 @@ void Scene::Run()
     m_Shader->Bind();
     m_Shader->SetUniform4f("u_Color", 0.f, 1.f, 0.f, 1.0f);
 
-    m_Points.push_back(Point(100.f, 100.f));
+    AddNewPoint(0, 0);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -94,6 +100,9 @@ void Scene::Run()
 
         m_ExpectedPointPosition->SetPosition(io.MousePos.x, m_Height - io.MousePos.y);
         m_IsCursorVisible = !ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow);
+
+        if (m_Points[m_ActivePointIndex].ShouldRemove())
+            RemovePoint(m_ActivePointIndex);
 
         Draw();
 

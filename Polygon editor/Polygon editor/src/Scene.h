@@ -18,10 +18,11 @@ private:
 	std::vector<Point> m_Points;
 
 	Point* m_ExpectedPointPosition;
-	int m_ActivePointIndex = 0;
+	int m_ActivePointIndex = -1;
 	bool m_IsCursorVisible;
 
 	void AddNewPoint(float x, float y);
+	void RemovePoint(int index);
 
 	void Init();
 	void Draw();
