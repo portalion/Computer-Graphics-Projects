@@ -6,8 +6,6 @@
 
 #include "Utils.h"
 #include "Shader.h"
-#include "Point.h"
-#include "Line.h"
 #include "Polygon.h"
 
 class Scene
@@ -19,9 +17,9 @@ private:
 
 	Polygon* polygon;
 
-	
-
 	void Init();
+	void Update();
+	void DisplayMenu();
 	void Draw();
 public:
 	static const int m_Width = 1024;

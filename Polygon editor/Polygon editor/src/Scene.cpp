@@ -34,11 +34,21 @@ void Scene::Init()
 
 }
 
+void Scene::Update()
+{
+    polygon->Update();
+    polygon->UpdateExpectedPoint();
+}
+
+void Scene::DisplayMenu()
+{
+    polygon->DisplayMenu();
+}
+
 void Scene::Draw()
 {
     polygon->Draw();
-
-    currentShader->SetUniform4f("u_Color", 0.5f, 0.5f, 0.5f, 1.f);
+    polygon->DrawExpectedPoint();
 }
 
 Scene::~Scene()
@@ -67,10 +77,8 @@ void Scene::Run()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
         
-        polygon->DisplayMenu();
-        polygon->Update();
-        polygon->UpdateExpectedPoint();
-        polygon->DrawExpectedPoint();
+        DisplayMenu();
+        Update();
         Draw();
 
         ImGui::ShowDemoWindow(); // Show demo window! :)

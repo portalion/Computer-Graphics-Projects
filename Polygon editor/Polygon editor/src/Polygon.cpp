@@ -112,6 +112,7 @@ void Polygon::UpdateExpectedPoint()
 
 void Polygon::DrawExpectedPoint()
 {
+    Scene::currentShader->SetUniform4f("u_Color", 0.5f, 0.5f, 0.5f, 1.f);
     if (m_IsCursorVisible)
     {
         m_ExpectedPointPosition->Draw();
