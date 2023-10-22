@@ -6,6 +6,7 @@
 #include <glm/gtx/vector_angle.hpp>
 
 #include "Utils.h"
+#include "Scene.h"
 
  unsigned int Line::m_Vao = 0;
  unsigned int Line:: m_Vbo = 0;
@@ -66,6 +67,7 @@ void Line::UpdateBasedOnPointsBinded()
 
 void Line::Draw()
 {
+	Scene::currentShader->SetUniformMat4f("u_Model", model);
 	GLCall(glBindVertexArray(m_Vao));
 	GLCall(glDrawArrays(GL_LINES, 0, 2));
 }

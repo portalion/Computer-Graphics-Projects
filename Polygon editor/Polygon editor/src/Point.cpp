@@ -64,6 +64,11 @@ Point::Point(float x, float y)
 	SetPosition(x, y);
 }
 
+Point::Point(Vertex position)
+	:Point(position.x, position.y)
+{
+}
+
 void Point::UpdateMatrices()
 {
 	model = glm::mat4(1.f);
@@ -72,6 +77,7 @@ void Point::UpdateMatrices()
 
 void Point::Draw()
 {
+	Scene::currentShader->SetUniformMat4f("u_Model", model);
 	GLCall(glBindVertexArray(m_Vao));
 	GLCall(glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, 0));
 }

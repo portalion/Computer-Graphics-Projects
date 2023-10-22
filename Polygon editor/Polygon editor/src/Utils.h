@@ -16,3 +16,5 @@ struct Vertex
 	float x;
 	float y;
 };
+
+void HelpMarker(const char* desc);

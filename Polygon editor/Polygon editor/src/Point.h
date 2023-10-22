@@ -27,6 +27,7 @@ private:
 	void UpdateMatrices();
 public:
 	Point(float x, float y);
+	Point(Vertex position);
 	glm::mat4 model;
 
 	inline const bool ShouldRemove() const { return m_Remove; }
