@@ -167,19 +167,19 @@ void Polygon::Update()
     case UpdatingMode::NOT_ACTIVE:
         return;
     case UpdatingMode::ADD_VERTICES:
-        if (!io.WantCaptureMouse && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+        if (!io.WantCaptureMouse && io.MouseClicked[static_cast<int>(MouseButton::LEFT)])
             AddPointAfterActive(CurrentMousePos);
         if (m_ActivePointIndex >= 0 && m_Points[m_ActivePointIndex]->ShouldRemove())
             RemoveActivePoint();
         UpdateExpectedPoint();
         break;
     case UpdatingMode::EDIT_POLYGON:
-
         for (int i = 0; i < m_Points.size(); i++)
             if (m_Points[i]->IsHovered())
             {
                 m_HoveredPointIndex = i;
-                if(io.MouseClicked)
+                if (io.MouseClicked[static_cast<int>(MouseButton::LEFT)])
+                    m_ActivePointIndex = i;
             }
         break;
     }
