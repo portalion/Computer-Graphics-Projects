@@ -23,6 +23,8 @@ private:
 	Point* points[2];
 	inline void UpdatePositionBasedOnPoints() { SetPosition(points[0]->GetPosition(), points[1]->GetPosition()); }
 public:
+	static void DeleteModel();
+
 	Line(Vertex v1 = { 0.f, 0.f }, Vertex v2 = { 0.f, 0.f });
 	Line(Point* first, Point* second);
 	glm::mat4 model;

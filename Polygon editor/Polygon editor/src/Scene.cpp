@@ -7,6 +7,9 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
+#include "Line.h"
+#include "Point.h"
+
 Scene* Scene::m_Instance = nullptr;
 Shader* Scene::currentShader = nullptr;
 
@@ -14,7 +17,16 @@ Shader* Scene::currentShader = nullptr;
 void Scene::AddNewPolygon()
 {
     polygons.push_back(new Polygon());
-    m_ActivePolygon = polygons.size() - 1;
+    ChangedActivePolygon(polygons.size() - 1);
+}
+
+void Scene::ChangedActivePolygon(int newPolygonIndex)
+{
+    if (m_ActivePolygon != -1)
+        polygons[m_ActivePolygon]->currentState = UpdatingMode::NOT_ACTIVE;
+    m_ActivePolygon = newPolygonIndex;
+    if (m_ActivePolygon != -1)
+        polygons[m_ActivePolygon]->currentState = UpdatingMode::ADD_VERTICES;
 }
 
 void Scene::Init()
@@ -41,11 +53,9 @@ void Scene::Init()
 
 void Scene::Update()
 {
-    if (m_ActivePolygon != -1)
-    {
-        polygons[m_ActivePolygon]->Update();
-        polygons[m_ActivePolygon]->UpdateExpectedPoint();
-    }
+    for(int i = 0; i < polygons.size(); i++)
+        polygons[i]->Update();
+    
 }
 
 void Scene::DisplayMenu()
@@ -76,7 +86,7 @@ void Scene::DisplayMenu()
         if (ImGui::BeginTabItem(name.c_str(), &open, m_ActivePolygon == i ? ImGuiTabItemFlags_SetSelected : ImGuiTabItemFlags_None))
         {
             if (ImGui::IsItemActive())
-                m_ActivePolygon = i;
+                ChangedActivePolygon(i);
             if (ImGui::IsItemHovered())
                 n_HoveredPolygon = i;
 
@@ -90,8 +100,8 @@ void Scene::DisplayMenu()
 
         if (!open)
         {
-            if (m_ActivePolygon > i) m_ActivePolygon--;
-            else if(m_ActivePolygon == i) m_ActivePolygon = polygons.size() > 1 ? 0 : -1;
+            if (m_ActivePolygon > i) ChangedActivePolygon(m_ActivePolygon - 1);
+            else if(m_ActivePolygon == i) ChangedActivePolygon(polygons.size() > 1 ? 0 : -1);
 
             delete polygons[i];
             polygons.erase(polygons.begin() + i--);
@@ -105,17 +115,16 @@ void Scene::Draw()
 {
     for (int i = 0; i < polygons.size(); i++)
     {
-        if (n_HoveredPolygon == i) polygons[i]->Draw(ActivityState::WILL_BE_ACTIVE);
-        else if (m_ActivePolygon == i) polygons[i]->Draw(ActivityState::ACTIVE);
-        else polygons[i]->Draw( ActivityState::NOT_ACTIVE);
+        if (n_HoveredPolygon == i) polygons[i]->Draw(true);
+        else polygons[i]->Draw(false);
     }
-    if (m_ActivePolygon != -1)
-        polygons[m_ActivePolygon]->DrawExpectedPoint();
 }
 
 Scene::~Scene()
 {
     delete currentShader;
+    Line::DeleteModel();
+    Point::DeleteModel();
 }
 
 void Scene::Run()

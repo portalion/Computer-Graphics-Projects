@@ -20,6 +20,13 @@ struct Vertex
 
 void HelpMarker(const char* desc);
 
+enum class MouseButton
+{
+	LEFT = 0,
+	RIGHT = 1,
+	MIDDLE = 2
+};
+
 enum class ActivityState
 {
 	ACTIVE = 0,

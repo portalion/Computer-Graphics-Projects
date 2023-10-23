@@ -5,6 +5,13 @@
 class Line;
 class Point;
 
+enum class UpdatingMode
+{
+	NOT_ACTIVE = -1,
+	ADD_VERTICES = 0,
+	EDIT_POLYGON = 1
+};
+
 class Polygon
 {
 private:
@@ -12,6 +19,7 @@ private:
 	std::vector<Point*> m_Points;
 
 	int m_ActivePointIndex = -1;
+	int m_HoveredPointIndex = -1;
 
 	Point* m_ExpectedPointPosition;
 	Line* m_ExpectedLinePositions;
@@ -28,11 +36,15 @@ private:
 		else return index + 1;
 	}
 
+	void DrawActive();
+	void DrawNonActive(bool isHovered);
 	void DeleteLine(unsigned int index);
 	void DeletePoint(unsigned int index);
 public:
 	Polygon();
 	~Polygon();
+
+	UpdatingMode currentState;
 
 	void AddPointAfterActive(Vertex position);
 	void RemoveActivePoint();
@@ -42,6 +54,6 @@ public:
 
 	void Update();
 	void DisplayMenu();
-	void Draw(ActivityState activity = ActivityState::NOT_ACTIVE);
+	void Draw(bool isHovered);
 };
 

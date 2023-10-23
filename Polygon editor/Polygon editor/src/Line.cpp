@@ -33,6 +33,12 @@ void Line::GenerateModel()
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
+void Line::DeleteModel()
+{
+	GLCall(glDeleteBuffers(1, &m_Vbo));
+	GLCall(glDeleteVertexArrays(1, &m_Vao));
+}
+
 Line::Line(Vertex v1, Vertex v2)
 	:model(glm::mat4(1.f))
 {

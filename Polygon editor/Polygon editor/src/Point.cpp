@@ -100,6 +100,13 @@ void Point::DisplayMenu()
 	ImGui::End();
 }
 
+bool Point::IsHovered()
+{
+	auto& io = ImGui::GetIO();
+	return (io.MousePos.x - x) * (io.MousePos.x - x) +
+		(Scene::m_Height - io.MousePos.y - y) * (Scene::m_Height - io.MousePos.y - y) <= size * size;
+}
+
 void Point::SetPosition(float x, float y)
 {
 	this->x = x;
@@ -115,4 +122,11 @@ void Point::SetPosition(Vertex position)
 Vertex Point::GetPosition()
 {
 	return { x, y };
+}
+
+void Point::DeleteModel()
+{
+	GLCall(glDeleteBuffers(1, &m_Ibo));
+	GLCall(glDeleteBuffers(1, &m_Vbo));
+	GLCall(glDeleteVertexArrays(1, &m_Vao));
 }

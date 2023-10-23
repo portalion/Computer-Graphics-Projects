@@ -26,6 +26,8 @@ private:
 
 	void UpdateMatrices();
 public:
+	static void DeleteModel();
+
 	Point(float x, float y);
 	Point(Vertex position);
 	glm::mat4 model;
@@ -34,6 +36,7 @@ public:
 	inline const bool Moved() const { return m_Moved; }
 
 	Vertex GetPosition();
+	bool IsHovered();
 	void SetPosition(float x, float y);
 	void SetPosition(Vertex position);
 	void Draw();

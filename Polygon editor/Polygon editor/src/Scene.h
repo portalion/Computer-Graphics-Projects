@@ -20,6 +20,7 @@ private:
 	unsigned int n_HoveredPolygon;
 
 	void AddNewPolygon();
+	void ChangedActivePolygon(int newPolygonIndex);
 
 	void Init();
 	void Update();
