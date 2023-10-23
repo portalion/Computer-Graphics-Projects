@@ -84,11 +84,12 @@ void Point::Draw()
 
 void Point::DisplayMenu()
 {
-	if (!ImGui::Begin("Active point menu", nullptr))
+	if (!ImGui::BeginChild("Active point menu"))
 	{
-		ImGui::End();
+		ImGui::EndChild();
 		return;
 	}
+	ImGui::SeparatorText("CurrentPointMenu");
 	ImGui::PushItemWidth(80);
 	m_Moved = ImGui::SliderFloat("X", &x, 0.0f, Scene::m_Width); ImGui::SameLine();
 	m_Moved = ImGui::SliderFloat("Y", &y, 0.0f, Scene::m_Height) || m_Moved;
@@ -97,7 +98,7 @@ void Point::DisplayMenu()
 	m_Remove = ImGui::Button("Remove Vertex");
 
 	ImGui::PopItemWidth();
-	ImGui::End();
+	ImGui::EndChild();
 }
 
 bool Point::IsHovered()

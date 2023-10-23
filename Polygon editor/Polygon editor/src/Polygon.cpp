@@ -183,28 +183,30 @@ void Polygon::Update()
             }
         break;
     }
+    for (int i = 0; i < m_Lines.size(); i++)
+        m_Lines[i]->UpdateBasedOnPointsBinded();
 }
 
 void Polygon::DisplayMenu()
 {
-    switch (currentState)
-    {
-
-    }
-    if(m_ActivePointIndex >= 0) m_Points[m_ActivePointIndex]->DisplayMenu();
-
     int tempActivePointIndex = m_ActivePointIndex;
-    ImGui::BeginChild("Polygon Editor");
+    if (!ImGui::BeginChild("Polygon Editor"))
+    {
+        ImGui::EndChild();
+        return;
+    }
+
     ImGui::PushItemWidth(180);
     ImGui::SliderInt("Select Active Vertice", &tempActivePointIndex, 0, static_cast<unsigned int>(m_Points.size()) - 1);
     ImGui::SameLine(); HelpMarker("CTRL+click to input value.");
     ImGui::PopItemWidth();
 
+    ImGui::SeparatorText("Select mode of current polygon:");
     if (ImGui::Selectable("Editing Mode", currentState == UpdatingMode::EDIT_POLYGON))
         currentState = UpdatingMode::EDIT_POLYGON;
     if (ImGui::Selectable("Adding Mode", currentState == UpdatingMode::ADD_VERTICES))
         currentState = UpdatingMode::ADD_VERTICES;
-
+    if (m_ActivePointIndex >= 0) m_Points[m_ActivePointIndex]->DisplayMenu();
     ImGui::EndChild();
     if(tempActivePointIndex >= 0 && tempActivePointIndex < m_Points.size()) m_ActivePointIndex = tempActivePointIndex;
 }
