@@ -79,7 +79,7 @@ void Point::Draw()
 {
 	Scene::currentShader->SetUniformMat4f("u_Model", model);
 	GLCall(glBindVertexArray(m_Vao));
-	GLCall(glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, 0));
+	GLCall(glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(m_Indices.size()), GL_UNSIGNED_INT, 0));
 }
 
 void Point::DisplayMenu()

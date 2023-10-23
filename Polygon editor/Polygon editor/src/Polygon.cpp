@@ -28,6 +28,7 @@ void Polygon::DeletePoint(unsigned int index)
 }
 
 Polygon::Polygon()
+    :m_IsCursorVisible{true}
 {
     m_ExpectedPointPosition = new Point(0, 0);
     m_ExpectedLinePositions = new Line[2];
@@ -96,16 +97,12 @@ void Polygon::RemoveActivePoint()
 
 void Polygon::UpdateExpectedPoint()
 {
-    if (m_Points.empty()) return;
-
     auto& io = ImGui::GetIO();
     Vertex CurrentMousePos = { io.MousePos.x, Scene::m_Height - io.MousePos.y };
-
-    unsigned int nextPointIndex = m_ActivePointIndex + 1;
-    if (nextPointIndex >= m_Points.size())nextPointIndex = 0;
-
     m_ExpectedPointPosition->SetPosition(CurrentMousePos);
-    m_ExpectedLinePositions[0].SetPosition(m_Points[nextPointIndex]->GetPosition(), CurrentMousePos);
+    
+    if (m_Points.empty()) return;
+    m_ExpectedLinePositions[0].SetPosition(m_Points[GetNextPointIndex(m_ActivePointIndex)]->GetPosition(), CurrentMousePos);
     m_ExpectedLinePositions[1].SetPosition(m_Points[m_ActivePointIndex]->GetPosition(), CurrentMousePos);
     m_IsCursorVisible = !io.WantCaptureMouse;
 }
@@ -142,29 +139,33 @@ void Polygon::DisplayMenu()
     if(m_ActivePointIndex >= 0) m_Points[m_ActivePointIndex]->DisplayMenu();
 
     int tempActivePointIndex = m_ActivePointIndex;
-    ImGui::Begin("Polygon Editor");
+    ImGui::BeginChild("Polygon Editor");
     ImGui::PushItemWidth(180);
-    ImGui::SliderInt("Select Active Vertice", &tempActivePointIndex, 0, m_Points.size() - 1);
+    ImGui::SliderInt("Select Active Vertice", &tempActivePointIndex, 0, static_cast<unsigned int>(m_Points.size()) - 1);
     ImGui::SameLine(); HelpMarker("CTRL+click to input value.");
     ImGui::PopItemWidth();
-    ImGui::End();
+    ImGui::EndChild();
     if(tempActivePointIndex >= 0 && tempActivePointIndex < m_Points.size()) m_ActivePointIndex = tempActivePointIndex;
 }
 
-void Polygon::Draw()
+void Polygon::Draw(ActivityState activity)
 {
+    glm::vec3 ActiveColor = GetColor(activity);
+    glm::vec3 NotActiveColor = (activity == ActivityState::WILL_BE_ACTIVE) ?
+        GetColor(activity) : GetColor(ActivityState::NOT_ACTIVE);
+
     Shader* currentShader = Scene::currentShader;
-    currentShader->SetUniform4f("u_Color", 0.5f, 0.5f, 0.5f, 1.f);
+
+    currentShader->SetUniform4f("u_Color", ActiveColor.x, ActiveColor.y, ActiveColor.z, 1.f);
+    for (int i = 0; i < m_Lines.size(); i++)
+        m_Lines[i]->Draw();
+
+    currentShader->SetUniform4f("u_Color", NotActiveColor.x, NotActiveColor.y, NotActiveColor.z, 1.f);
     for (int i = 0; i < m_Points.size(); i++)
         if (i != m_ActivePointIndex)
             m_Points[i]->Draw();
 
-    currentShader->SetUniform4f("u_Color", 0.f, 1.f, 0.f, 1.f);
+    currentShader->SetUniform4f("u_Color", ActiveColor.x, ActiveColor.y, ActiveColor.z, 1.f);
     if (m_ActivePointIndex >= 0) m_Points[m_ActivePointIndex]->Draw();
-    currentShader->SetUniform4f("u_Color", 0.5f, 0.5f, 0.5f, 1.f);
-
-    currentShader->SetUniform4f("u_Color", 0.f, 1.f, 0.f, 1.f);
-    for (int i = 0; i < m_Lines.size(); i++)
-        m_Lines[i]->Draw();
-    
+    currentShader->SetUniform4f("u_Color", NotActiveColor.x, NotActiveColor.y, NotActiveColor.z, 1.f);
 }

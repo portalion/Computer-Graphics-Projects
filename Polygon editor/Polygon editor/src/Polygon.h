@@ -19,7 +19,7 @@ private:
 
 	inline unsigned int GetPreviousPointIndex(unsigned int index) 
 	{
-		if (index <= 0) return m_Points.size() - 1;
+		if (index <= 0) return static_cast<unsigned int>(m_Points.size() - 1);
 		else return index - 1;
 	}
 	inline unsigned int GetNextPointIndex(unsigned int index)
@@ -42,6 +42,6 @@ public:
 
 	void Update();
 	void DisplayMenu();
-	void Draw();
+	void Draw(ActivityState activity = ActivityState::NOT_ACTIVE);
 };
 

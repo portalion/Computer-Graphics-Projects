@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GL/glew.h>
+#include <glm/glm.hpp>
 
 #define ASSERT(x) if (!(x)) __debugbreak();
 #define GLCall(x) GLClearError();\
@@ -18,3 +19,12 @@ struct Vertex
 };
 
 void HelpMarker(const char* desc);
+
+enum class ActivityState
+{
+	ACTIVE = 0,
+	NOT_ACTIVE = 1,
+	WILL_BE_ACTIVE = 2
+};
+
+glm::vec3 GetColor(ActivityState activity);

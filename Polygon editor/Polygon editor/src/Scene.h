@@ -15,15 +15,19 @@ private:
 
 	glm::mat4 m_Projection;
 
-	Polygon* polygon;
+	std::vector<Polygon*> polygons;
+	unsigned int m_ActivePolygon;
+	unsigned int n_HoveredPolygon;
+
+	void AddNewPolygon();
 
 	void Init();
 	void Update();
 	void DisplayMenu();
 	void Draw();
 public:
-	static const int m_Width = 1024;
-	static const int m_Height = 768;
+	static const int m_Width = 1600;
+	static const int m_Height = 900;
 	static Shader* currentShader;
 	
 	GLFWwindow* window;
