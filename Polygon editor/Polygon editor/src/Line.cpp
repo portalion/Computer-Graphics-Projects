@@ -5,6 +5,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+
 #include "Utils.h"
 #include "Scene.h"
 
@@ -40,7 +44,7 @@ void Line::DeleteModel()
 }
 
 Line::Line(Vertex v1, Vertex v2)
-	:model(glm::mat4(1.f))
+	:model(glm::mat4(1.f)), m_PointDragged{false}, dragging{ false }
 {
 	if (m_Vbo == 0 || m_Vao == 0)
 		GenerateModel();
@@ -49,11 +53,49 @@ Line::Line(Vertex v1, Vertex v2)
 }
 
 Line::Line(Point* first, Point* second)
+	:model(glm::mat4(1.f)), m_PointDragged{ false }, dragging{false}
 {
 	if (m_Vbo == 0 || m_Vao == 0)
 		GenerateModel();
 
 	BindPoint(first, second);
+}
+
+float area(int x1, int y1, int x2, int y2,
+	int x3, int y3)
+{
+	return abs((x1 * (y2 - y3) + x2 * (y3 - y1) +
+		x3 * (y1 - y2)) / 2.0);
+}
+
+bool Line::IsHovered()
+{
+	if (points[0]->IsHovered() || points[1]->IsHovered()
+		|| points[0]->dragging || points[1]->dragging) return false;
+	Vertex first = points[0]->GetPosition();
+	Vertex second = points[1]->GetPosition();
+
+	if (first.y > second.y)
+	{
+		first = points[1]->GetPosition();
+		second = points[0]->GetPosition();
+	}
+	
+	int x = ImGui::GetMousePos().x;
+	int y = Scene::m_Height - ImGui::GetMousePos().y;
+
+	int offset = 10;
+
+	int x1 = first.x - offset, x2 = first.x - offset, x3 = second.x + offset, x4 = second.x + offset;
+	int y1 = first.y - offset, y2 = first.y + offset, y3 = second.y + offset, y4 = second.y - offset;
+
+	float A = area(x1, y1, x2, y2, x3, y3) +
+		area(x1, y1, x4, y4, x3, y3);
+	float A1 = area(x, y, x1, y1, x2, y2);
+	float A2 = area(x, y, x2, y2, x3, y3);
+	float A3 = area(x, y, x3, y3, x4, y4);
+	float A4 = area(x, y, x1, y1, x4, y4);
+	return (A == A1 + A2 + A3 + A4);
 }
 
 void Line::SetPosition(Vertex v1, Vertex v2)
@@ -67,8 +109,43 @@ void Line::SetPosition(Vertex v1, Vertex v2)
 
 void Line::UpdateBasedOnPointsBinded()
 {
-	if (points[0]->Moved() || points[1]->Moved())
+	if(m_PointDragged)
 		UpdatePositionBasedOnPoints();
+
+	if (points[0]->Moved() || points[1]->Moved() ||
+		points[0]->dragging || points[1]->dragging)
+		m_PointDragged = true;
+	else
+		m_PointDragged = false;
+}
+
+void Line::Update()
+{
+	if (dragging)
+	{
+		auto tmp = ImGui::GetMouseDragDelta(ImGuiMouseButton_Left, 0.f);
+		ImGui::ResetMouseDragDelta(ImGuiMouseButton_Left);
+		Vertex delta = { tmp.x, tmp.y };
+		Vertex first = points[0]->GetPosition();
+		first.x = first.x + delta.x;
+		first.y = first.y - delta.y;
+		Vertex second = points[1]->GetPosition();
+		second.x = second.x + delta.x;
+		second.y = second.y - delta.y;
+		points[0]->SetPosition(first);
+		points[1]->SetPosition(second);
+
+		UpdatePositionBasedOnPoints();
+		points[0]->GetLines()[0]->UpdatePositionBasedOnPoints();
+		points[0]->GetLines()[1]->UpdatePositionBasedOnPoints();
+		points[1]->GetLines()[0]->UpdatePositionBasedOnPoints();
+		points[1]->GetLines()[1]->UpdatePositionBasedOnPoints();
+
+		if (ImGui::IsMouseReleased(ImGuiMouseButton_Left))
+			dragging = false;
+	}
+
+
 }
 
 void Line::Draw()

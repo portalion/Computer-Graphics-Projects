@@ -3,6 +3,7 @@
 #include <vector>
 
 struct Vertex;
+class Line;
 
 class Point
 {
@@ -23,6 +24,8 @@ private:
 
 	float x;
 	float y;
+	
+	Line* m_Lines[2];
 
 	void UpdateMatrices();
 public:
@@ -35,10 +38,16 @@ public:
 	inline const bool ShouldRemove() const { return m_Remove; }
 	inline const bool Moved() const { return m_Moved; }
 
+	inline void BindLines(Line* first, Line* second) { m_Lines[0] = first; m_Lines[1] = second; }
+	inline Line** GetLines() { return m_Lines; }
+
+	bool dragging;
+
 	Vertex GetPosition();
 	bool IsHovered();
 	void SetPosition(float x, float y);
 	void SetPosition(Vertex position);
+	void Update();
 	void Draw();
 	void DisplayMenu();
 };

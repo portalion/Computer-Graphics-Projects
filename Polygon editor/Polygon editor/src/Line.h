@@ -20,6 +20,8 @@ private:
 
 	static void GenerateModel();
 
+	bool m_PointDragged;
+
 	Point* points[2];
 	inline void UpdatePositionBasedOnPoints() { SetPosition(points[0]->GetPosition(), points[1]->GetPosition()); }
 public:
@@ -29,8 +31,12 @@ public:
 	Line(Point* first, Point* second);
 	glm::mat4 model;
 	
+	bool dragging;
+
+	bool IsHovered();
 	void SetPosition(Vertex v1, Vertex v2);
 	void UpdateBasedOnPointsBinded();
+	void Update();
 	void Draw();
 
 	inline void BindPoint(Point* toInsert, LinePointPosition positionToInsert)

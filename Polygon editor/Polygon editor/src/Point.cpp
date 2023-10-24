@@ -56,7 +56,7 @@ void Point::GenerateVertices()
 }
 
 Point::Point(float x, float y)
-	:model(glm::mat4(1.f)), m_Remove{false}, m_Moved{false}
+	:model(glm::mat4(1.f)), m_Remove{false}, m_Moved{false}, dragging{false}
 {
 	if(m_Vao == 0 || m_Vbo == 0 || m_Ibo == 0)
 		GenerateVertices();
@@ -118,6 +118,16 @@ void Point::SetPosition(float x, float y)
 void Point::SetPosition(Vertex position)
 {
 	this->SetPosition(position.x, position.y);
+}
+
+void Point::Update()
+{
+	if (dragging)
+	{
+		SetPosition(ImGui::GetMousePos().x, Scene::m_Height - ImGui::GetMousePos().y);
+		if(ImGui::IsMouseReleased(ImGuiMouseButton_Left))
+			dragging = false;
+	}
 }
 
 Vertex Point::GetPosition()

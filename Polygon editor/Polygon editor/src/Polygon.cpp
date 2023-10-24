@@ -22,7 +22,8 @@ void Polygon::DrawActive()
 
     currentShader->SetUniform4f("u_Color", ActiveColor.x, ActiveColor.y, ActiveColor.z, 1.f);
     for (int i = 0; i < m_Lines.size(); i++)
-        m_Lines[i]->Draw();
+        if(m_HoveredLineIndex != i)
+            m_Lines[i]->Draw();
     currentShader->SetUniform4f("u_Color", NotActiveColor.x, NotActiveColor.y, NotActiveColor.z, 1.f);
     for (int i = 0; i < m_Points.size(); i++)
         if(m_ActivePointIndex != i && m_HoveredPointIndex != i)
@@ -32,6 +33,7 @@ void Polygon::DrawActive()
     if (m_ActivePointIndex >= 0) m_Points[m_ActivePointIndex]->Draw();
     currentShader->SetUniform4f("u_Color", HoveredColor.x, HoveredColor.y, HoveredColor.z, 1.f);
     if (m_HoveredPointIndex >= 0) m_Points[m_HoveredPointIndex]->Draw();
+    if (m_HoveredLineIndex >= 0) m_Lines[m_HoveredLineIndex]->Draw();
     currentShader->SetUniform4f("u_Color", NotActiveColor.x, NotActiveColor.y, NotActiveColor.z, 1.f);
 }
 
@@ -95,6 +97,9 @@ void Polygon::AddPointAfterActive(Vertex position)
         new Line(m_Points[previousPointIndex], m_Points[m_ActivePointIndex]));
     m_Lines.insert(m_Lines.begin() + m_ActivePointIndex,    
         new Line(m_Points[m_ActivePointIndex], m_Points[nextPointIndex]));
+
+    for(int i = 0; i < m_Points.size(); i++)
+        m_Points[i]->BindLines(m_Lines[i], m_Lines[GetPreviousPointIndex(i)]);
 }
 
 void Polygon::RemoveActivePoint()
@@ -129,6 +134,9 @@ void Polygon::RemoveActivePoint()
         new Line(m_Points[previousPointIndex], m_Points[nextPointIndex]));
     DeletePoint(m_ActivePointIndex);
     m_ActivePointIndex = GetPreviousPointIndex(m_ActivePointIndex);
+
+    for (int i = 0; i < m_Points.size(); i++)
+        m_Points[i]->BindLines(m_Lines[i], m_Lines[GetPreviousPointIndex(i)]);
 }
 
 void Polygon::UpdateExpectedPoint()
@@ -161,13 +169,14 @@ void Polygon::Update()
     auto& io = ImGui::GetIO();
     Vertex CurrentMousePos = { io.MousePos.x, Scene::m_Height - io.MousePos.y };
     m_HoveredPointIndex = -1;
+    m_HoveredLineIndex = -1;
 
     switch (currentState)
     {
     case UpdatingMode::NOT_ACTIVE:
         return;
     case UpdatingMode::ADD_VERTICES:
-        if (!io.WantCaptureMouse && io.MouseClicked[static_cast<int>(MouseButton::LEFT)])
+        if (!io.WantCaptureMouse && io.MouseClicked[ImGuiMouseButton_Left])
             AddPointAfterActive(CurrentMousePos);
         if (m_ActivePointIndex >= 0 && m_Points[m_ActivePointIndex]->ShouldRemove())
             RemoveActivePoint();
@@ -178,9 +187,25 @@ void Polygon::Update()
             if (m_Points[i]->IsHovered())
             {
                 m_HoveredPointIndex = i;
-                if (io.MouseClicked[static_cast<int>(MouseButton::LEFT)])
+                if (io.MouseClicked[ImGuiMouseButton_Left])
+                {
                     m_ActivePointIndex = i;
+                    m_Points[i]->dragging = true;
+                }
             }
+
+        for (int i = 0; i < m_Lines.size(); i++)
+            if (m_Lines[i]->IsHovered())
+            {
+                m_HoveredLineIndex = i;
+                if (io.MouseClicked[ImGuiMouseButton_Left])
+                    m_Lines[m_HoveredLineIndex]->dragging = true;
+            }
+
+        if(m_ActivePointIndex != -1)
+            m_Points[m_ActivePointIndex]->Update();
+        for(int i = 0; i < m_Lines.size(); i++)
+            m_Lines[i]->Update();
         break;
     }
     for (int i = 0; i < m_Lines.size(); i++)
