@@ -31,6 +31,8 @@ public:
 	Line(Point* first, Point* second);
 	glm::mat4 model;
 	
+	Vertex GetMiddlePoint();
+
 	bool dragging;
 
 	bool IsHovered();

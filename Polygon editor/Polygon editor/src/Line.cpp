@@ -61,6 +61,15 @@ Line::Line(Point* first, Point* second)
 	BindPoint(first, second);
 }
 
+Vertex Line::GetMiddlePoint()
+{
+	return 
+	{
+		(points[0]->GetPosition().x + points[1]->GetPosition().x) / 2,
+		(points[0]->GetPosition().y + points[1]->GetPosition().y) / 2
+	};
+}
+
 float area(int x1, int y1, int x2, int y2,
 	int x3, int y3)
 {
@@ -72,30 +81,22 @@ bool Line::IsHovered()
 {
 	if (points[0]->IsHovered() || points[1]->IsHovered()
 		|| points[0]->dragging || points[1]->dragging) return false;
-	Vertex first = points[0]->GetPosition();
-	Vertex second = points[1]->GetPosition();
-
-	if (first.y > second.y)
-	{
-		first = points[1]->GetPosition();
-		second = points[0]->GetPosition();
-	}
 	
-	int x = ImGui::GetMousePos().x;
-	int y = Scene::m_Height - ImGui::GetMousePos().y;
+	glm::vec2 first(points[0]->GetPosition().x, points[0]->GetPosition().y);
+	glm::vec2 second(points[1]->GetPosition().x, points[1]->GetPosition().y);
+	glm::vec2 mousePos(ImGui::GetMousePos().x, Scene::m_Height - ImGui::GetMousePos().y);
 
-	int offset = 10;
+	int offset = 5;
 
-	int x1 = first.x - offset, x2 = first.x - offset, x3 = second.x + offset, x4 = second.x + offset;
-	int y1 = first.y - offset, y2 = first.y + offset, y3 = second.y + offset, y4 = second.y - offset;
+	glm::vec2 lineDirection = second - first;
+	glm::vec2 pointToLineStart = mousePos - first;
 
-	float A = area(x1, y1, x2, y2, x3, y3) +
-		area(x1, y1, x4, y4, x3, y3);
-	float A1 = area(x, y, x1, y1, x2, y2);
-	float A2 = area(x, y, x2, y2, x3, y3);
-	float A3 = area(x, y, x3, y3, x4, y4);
-	float A4 = area(x, y, x1, y1, x4, y4);
-	return (A == A1 + A2 + A3 + A4);
+	float t = glm::dot(pointToLineStart, lineDirection) / glm::length2(lineDirection);
+	t = glm::clamp(t, 0.0f, 1.0f);
+
+	glm::vec2 closestPoint = first + t * lineDirection;
+
+	return glm::length(mousePos - closestPoint) < offset;
 }
 
 void Line::SetPosition(Vertex v1, Vertex v2)

@@ -48,6 +48,7 @@ public:
 	UpdatingMode currentState;
 
 	void AddPointAfterActive(Vertex position);
+	void AddVertexInLine(int indexOfLine);
 	void RemoveActivePoint();
 
 	void UpdateExpectedPoint();

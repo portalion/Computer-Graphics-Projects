@@ -102,6 +102,22 @@ void Polygon::AddPointAfterActive(Vertex position)
         m_Points[i]->BindLines(m_Lines[i], m_Lines[GetPreviousPointIndex(i)]);
 }
 
+void Polygon::AddVertexInLine(int indexOfLine) // 3 size 3
+{
+    m_Points.insert(m_Points.begin() + indexOfLine + 1, new Point(m_Lines[indexOfLine]->GetMiddlePoint())); // 0
+
+    DeleteLine(indexOfLine);
+
+    m_Lines.insert(m_Lines.begin() + indexOfLine,
+        new Line(m_Points[indexOfLine + 1], m_Points[GetNextPointIndex(indexOfLine + 1)]));
+
+    m_Lines.insert(m_Lines.begin() + indexOfLine,
+        new Line(m_Points[indexOfLine + 1], m_Points[indexOfLine]));
+    
+    for (int i = 0; i < m_Points.size(); i++)
+        m_Points[i]->BindLines(m_Lines[i], m_Lines[GetPreviousPointIndex(i)]);
+}
+
 void Polygon::RemoveActivePoint()
 {
     if (m_Points.size() <= 0) return;
@@ -193,15 +209,19 @@ void Polygon::Update()
                     m_Points[i]->dragging = true;
                 }
             }
-
-        for (int i = 0; i < m_Lines.size(); i++)
-            if (m_Lines[i]->IsHovered())
-            {
-                m_HoveredLineIndex = i;
-                if (io.MouseClicked[ImGuiMouseButton_Left])
-                    m_Lines[m_HoveredLineIndex]->dragging = true;
-            }
-
+        if (m_HoveredPointIndex == -1)
+            for (int i = 0; i < m_Lines.size(); i++)
+                if (m_Lines[i]->IsHovered())
+                {
+                    m_HoveredLineIndex = i;
+                    if (io.MouseDoubleClicked[ImGuiMouseButton_Left])
+                        AddVertexInLine(i);
+                    else if (io.MouseClicked[ImGuiMouseButton_Left])
+                        m_Lines[m_HoveredLineIndex]->dragging = true;
+                    else continue;
+                    break;
+                }
+        
         if(m_ActivePointIndex != -1)
             m_Points[m_ActivePointIndex]->Update();
         for(int i = 0; i < m_Lines.size(); i++)
