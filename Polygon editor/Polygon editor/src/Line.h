@@ -23,7 +23,6 @@ private:
 	bool m_PointDragged;
 
 	Point* points[2];
-	inline void UpdatePositionBasedOnPoints() { SetPosition(points[0]->GetPosition(), points[1]->GetPosition()); }
 public:
 	static void DeleteModel();
 
@@ -35,6 +34,7 @@ public:
 
 	bool dragging;
 
+	inline void UpdatePositionBasedOnPoints() { SetPosition(points[0]->GetPosition(), points[1]->GetPosition()); }
 	bool IsHovered();
 	void SetPosition(Vertex v1, Vertex v2);
 	void UpdateBasedOnPointsBinded();

@@ -13,6 +13,27 @@
 #include "Point.h"
 #include "Line.h"
 
+void Polygon::MoveByMouse()
+{
+    Vertex delta =
+    {
+        ImGui::GetMouseDragDelta(ImGuiMouseButton_Left, 0.f).x,
+        ImGui::GetMouseDragDelta(ImGuiMouseButton_Left, 0.f).y
+    };
+    ImGui::ResetMouseDragDelta(ImGuiMouseButton_Left);
+    for (int i = 0; i < m_Points.size(); i++)
+    {
+        m_Points[i]->SetPosition(
+            {
+                m_Points[i]->GetPosition().x + delta.x,
+                m_Points[i]->GetPosition().y - delta.y,
+            });
+    }
+
+    for (int i = 0; i < m_Lines.size(); i++)
+        m_Lines[i]->UpdateBasedOnPointsBinded();
+}
+
 void Polygon::DrawActive()
 {
     Shader* currentShader = Scene::currentShader;
@@ -66,7 +87,7 @@ void Polygon::DeletePoint(unsigned int index)
 }
 
 Polygon::Polygon()
-    :m_IsCursorVisible{true}, currentState{ UpdatingMode::NOT_ACTIVE }
+    :m_IsCursorVisible{true}, currentState{ UpdatingMode::NOT_ACTIVE }, m_Dragging{false}
 {
     m_ExpectedPointPosition = new Point(0, 0);
     m_ExpectedLinePositions = new Line[2];
@@ -187,6 +208,14 @@ void Polygon::Update()
     m_HoveredPointIndex = -1;
     m_HoveredLineIndex = -1;
 
+    if (m_Dragging)
+    {
+        MoveByMouse();
+
+        if (io.MouseReleased[ImGuiMouseButton_Left])
+            m_Dragging = false;
+    }
+
     switch (currentState)
     {
     case UpdatingMode::NOT_ACTIVE:
@@ -199,6 +228,9 @@ void Polygon::Update()
         UpdateExpectedPoint();
         break;
     case UpdatingMode::EDIT_POLYGON:
+        if (io.KeyShift && io.MouseClicked[ImGuiMouseButton_Left])
+            m_Dragging = true;
+
         for (int i = 0; i < m_Points.size(); i++)
             if (m_Points[i]->IsHovered())
             {
@@ -229,7 +261,7 @@ void Polygon::Update()
         break;
     }
     for (int i = 0; i < m_Lines.size(); i++)
-        m_Lines[i]->UpdateBasedOnPointsBinded();
+        m_Lines[i]->UpdatePositionBasedOnPoints();
 }
 
 void Polygon::DisplayMenu()

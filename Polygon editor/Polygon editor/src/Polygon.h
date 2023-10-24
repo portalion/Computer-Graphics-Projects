@@ -26,6 +26,8 @@ private:
 	Line* m_ExpectedLinePositions;
 	bool m_IsCursorVisible;
 
+	bool m_Dragging;
+
 	inline unsigned int GetPreviousPointIndex(unsigned int index) 
 	{
 		if (index <= 0) return static_cast<unsigned int>(m_Points.size() - 1);
@@ -37,6 +39,7 @@ private:
 		else return index + 1;
 	}
 
+	void MoveByMouse();
 	void DrawActive();
 	void DrawNonActive(bool isHovered);
 	void DeleteLine(unsigned int index);
