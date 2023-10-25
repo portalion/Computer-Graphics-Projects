@@ -26,6 +26,7 @@ private:
 	Line* m_ExpectedLinePositions;
 	bool m_IsCursorVisible;
 
+	bool m_ShouldDisplayCursor;
 	bool m_Dragging;
 
 	inline unsigned int GetPreviousPointIndex(unsigned int index) 

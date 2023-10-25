@@ -87,7 +87,8 @@ void Polygon::DeletePoint(unsigned int index)
 }
 
 Polygon::Polygon()
-    :m_IsCursorVisible{true}, currentState{ UpdatingMode::NOT_ACTIVE }, m_Dragging{false}
+    :m_IsCursorVisible{true}, currentState{ UpdatingMode::NOT_ACTIVE }, m_Dragging{false},
+    m_ShouldDisplayCursor{true}
 {
     m_ExpectedPointPosition = new Point(0, 0);
     m_ExpectedLinePositions = new Line[2];
@@ -254,6 +255,13 @@ void Polygon::Update()
                     break;
                 }
         
+        if (m_HoveredLineIndex == -1 && m_HoveredPointIndex == -1 &&
+            !io.WantCaptureMouse && io.MouseDoubleClicked[ImGuiMouseButton_Left])
+            AddPointAfterActive(CurrentMousePos);
+        if (m_ActivePointIndex != -1 && m_Points[m_ActivePointIndex]->ShouldRemove())
+            RemoveActivePoint();
+        if(m_ShouldDisplayCursor)UpdateExpectedPoint();
+
         if(m_ActivePointIndex != -1)
             m_Points[m_ActivePointIndex]->Update();
         for(int i = 0; i < m_Lines.size(); i++)
@@ -283,6 +291,9 @@ void Polygon::DisplayMenu()
         currentState = UpdatingMode::EDIT_POLYGON;
     if (ImGui::Selectable("Adding Mode", currentState == UpdatingMode::ADD_VERTICES))
         currentState = UpdatingMode::ADD_VERTICES;
+    
+    ImGui::Checkbox("Should display lines for new point", &m_ShouldDisplayCursor);
+
     if (m_ActivePointIndex >= 0) m_Points[m_ActivePointIndex]->DisplayMenu();
     ImGui::EndChild();
     if(tempActivePointIndex >= 0 && tempActivePointIndex < m_Points.size()) m_ActivePointIndex = tempActivePointIndex;
@@ -306,6 +317,8 @@ void Polygon::Draw(bool isHovered)
         break;
     case UpdatingMode::EDIT_POLYGON:
         DrawActive();
+        if (m_ShouldDisplayCursor)
+            DrawExpectedPoint();
         break;
     }
 }

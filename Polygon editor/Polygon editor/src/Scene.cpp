@@ -26,7 +26,7 @@ void Scene::ChangedActivePolygon(int newPolygonIndex)
         polygons[m_ActivePolygon]->currentState = UpdatingMode::NOT_ACTIVE;
     m_ActivePolygon = newPolygonIndex;
     if (m_ActivePolygon != -1)
-        polygons[m_ActivePolygon]->currentState = UpdatingMode::ADD_VERTICES;
+        polygons[m_ActivePolygon]->currentState = UpdatingMode::EDIT_POLYGON;
 }
 
 void Scene::Init()
