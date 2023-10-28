@@ -44,6 +44,41 @@ Line* Line::GetNeighbour(bool left)
 		points[index]->GetLines()[1] : points[index]->GetLines()[0];;
 }
 
+void Line::DrawIcon()
+{
+	static int id = 0;
+	const int size = 20;
+	const int offset = 10;
+	int posX = points[0]->GetPosition().x / 2 + points[1]->GetPosition().x / 2;
+	int posY = Scene::m_Height - points[0]->GetPosition().y / 2 - points[1]->GetPosition().y / 2;
+
+	if (horizontal)
+		posY -= offset + size;
+	else if (vertical)
+		posX += offset;
+	
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDecoration |
+		ImGuiWindowFlags_NoBackground |
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoMouseInputs |
+		ImGuiWindowFlags_NoFocusOnAppearing |
+		ImGuiWindowFlags_NoBringToFrontOnFocus;
+
+	ImGui::SetNextWindowPos(ImVec2(posX - 5, posY - 5), ImGuiCond_Always);
+	ImGui::SetNextWindowSize(ImVec2(25, 25), ImGuiCond_Always);
+	ImGui::Begin(("icon" + std::to_string(id++)).c_str(), NULL, windowFlags);
+	ImVec2 rectPosition(posX, posY);  // Position of the rectangle
+	ImU32 color = IM_COL32(255, 0, 0, 255);  // Red color
+
+	ImGui::GetWindowDrawList()->AddRect(rectPosition, ImVec2(posX + size, posY + size), color);
+	if(vertical)
+		ImGui::GetWindowDrawList()->AddLine(ImVec2(posX + size / 2 - 1, posY), ImVec2(posX + size / 2 - 1, posY + size - 1), color, 1.0f);
+	else if (horizontal)
+		ImGui::GetWindowDrawList()->AddLine(ImVec2(posX, posY + size / 2 - 1), ImVec2(posX + size - 1, posY + size / 2 - 1), color, 1.0f);
+	ImGui::End();
+}
+
 void Line::DeleteModel()
 {
 	GLCall(glDeleteBuffers(1, &m_Vbo));
@@ -92,7 +127,7 @@ void Line::UpdatePositionBasedOnPoints()
 	 if (horizontal)
 		 points[otherPointIndex]->SetPosition(points[otherPointIndex]->GetPosition().x, points[movedPointIndex]->GetPosition().y);
 	 
-	 if(vertical)
+	 if (vertical)
 		 points[otherPointIndex]->SetPosition(points[movedPointIndex]->GetPosition().x, points[otherPointIndex]->GetPosition().y);
 
 	 SetPosition(points[0]->GetPosition(), points[1]->GetPosition());
@@ -175,6 +210,30 @@ void Line::Update()
 		points[0]->SetPosition(first);
 		points[1]->SetPosition(second);
 
+		if (GetNeighbour(true)->horizontal)
+		{
+			GetNeighbour(true)->points[0]->SetPosition(GetNeighbour(true)->points[0]->GetPosition().x, first.y);
+			GetNeighbour(true)->points[1]->SetPosition(GetNeighbour(true)->points[1]->GetPosition().x, first.y);
+		}
+
+		if (GetNeighbour(false)->horizontal)
+		{
+			GetNeighbour(false)->points[0]->SetPosition(GetNeighbour(false)->points[0]->GetPosition().x, second.y);
+			GetNeighbour(false)->points[1]->SetPosition(GetNeighbour(false)->points[1]->GetPosition().x, second.y);
+		}
+
+		if (GetNeighbour(true)->vertical)
+		{
+			GetNeighbour(true)->points[0]->SetPosition(first.x, GetNeighbour(true)->points[0]->GetPosition().y);
+			GetNeighbour(true)->points[1]->SetPosition(first.x, GetNeighbour(true)->points[1]->GetPosition().y);
+		}
+
+		if (GetNeighbour(false)->vertical)
+		{
+			GetNeighbour(false)->points[0]->SetPosition(second.x, GetNeighbour(false)->points[0]->GetPosition().y);
+			GetNeighbour(false)->points[1]->SetPosition(second.x, GetNeighbour(false)->points[1]->GetPosition().y);
+		}
+
 		UpdatePositionBasedOnPoints();
 		points[0]->GetLines()[0]->UpdatePositionBasedOnPoints();
 		points[0]->GetLines()[1]->UpdatePositionBasedOnPoints();
@@ -187,7 +246,10 @@ void Line::Update()
 }
 
 void Line::Draw()
-{
+{ 
+	if (vertical || horizontal)
+		DrawIcon();
+
 	Scene::currentShader->SetUniformMat4f("u_Model", model);
 	GLCall(glBindVertexArray(m_Vao));
 	GLCall(glDrawArrays(GL_LINES, 0, 2));

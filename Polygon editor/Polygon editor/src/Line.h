@@ -25,6 +25,7 @@ private:
 	Point* points[2];
 
 	Line* GetNeighbour(bool left);
+	void DrawIcon();
 public:
 	static void DeleteModel();
 
