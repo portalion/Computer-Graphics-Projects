@@ -55,7 +55,6 @@ void Scene::Update()
 {
     for(int i = 0; i < polygons.size(); i++)
         polygons[i]->Update();
-    
 }
 
 void Scene::DisplayMenu()

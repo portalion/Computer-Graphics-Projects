@@ -314,9 +314,10 @@ void Polygon::DisplayMenu()
     std::string tmp = "Line ";
     for (int i = 0; i < m_Lines.size(); i++)
     {
-        if (ImGui::IsItemHovered()) m_HoveredLineIndex = i;
         if (ImGui::BeginMenu((tmp + std::to_string(i)).c_str()))
         {
+            if (ImGui::IsItemHovered())
+                m_HoveredLineIndex = i;
             m_Lines[i]->DisplayMenu();
             ImGui::EndMenu();
         }

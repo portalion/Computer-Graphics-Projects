@@ -33,6 +33,8 @@ public:
 	Vertex GetMiddlePoint();
 
 	bool dragging;
+	bool vertical = false;
+	bool horizontal = false;
 
 	inline void UpdatePositionBasedOnPoints() { SetPosition(points[0]->GetPosition(), points[1]->GetPosition()); }
 	bool IsHovered();

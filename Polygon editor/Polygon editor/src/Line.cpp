@@ -122,8 +122,16 @@ void Line::UpdateBasedOnPointsBinded()
 
 void Line::DisplayMenu()
 {
-	if (ImGui::MenuItem("Vertical", NULL, false)) {}
-	if (ImGui::MenuItem("Horizontal", NULL, false)) {}
+	if (ImGui::MenuItem("Vertical", NULL, vertical)) 
+	{
+		vertical = !vertical;
+		horizontal = false;
+	}
+	if (ImGui::MenuItem("Horizontal", NULL, horizontal)) 
+	{
+		horizontal = !horizontal;
+		vertical = false;
+	}
 }
 
 void Line::Update()
