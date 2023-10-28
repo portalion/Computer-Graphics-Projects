@@ -135,11 +135,15 @@ void Line::DisplayMenu()
 	{
 		vertical = !vertical;
 		horizontal = false;
+
+		if (vertical) points[0]->SetPosition(points[1]->GetPosition().x, points[0]->GetPosition().y);
+		
 	}
 	if (ImGui::MenuItem("Horizontal", NULL, horizontal, !(right->horizontal || left->horizontal)))
 	{
 		horizontal = !horizontal;
 		vertical = false;
+		if (horizontal) points[0]->SetPosition(points[0]->GetPosition().x, points[1]->GetPosition().y);
 	}
 }
 
