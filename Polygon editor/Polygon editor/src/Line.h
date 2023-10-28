@@ -23,6 +23,8 @@ private:
 	bool m_PointDragged;
 
 	Point* points[2];
+
+	Line* GetNeighbour(bool left);
 public:
 	static void DeleteModel();
 

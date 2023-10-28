@@ -37,6 +37,13 @@ void Line::GenerateModel()
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
+Line* Line::GetNeighbour(bool left)
+{
+	int index = left ? 0 : 1;
+	return points[index]->GetLines()[0] == this ?
+		points[index]->GetLines()[1] : points[index]->GetLines()[0];;
+}
+
 void Line::DeleteModel()
 {
 	GLCall(glDeleteBuffers(1, &m_Vbo));
@@ -122,12 +129,14 @@ void Line::UpdateBasedOnPointsBinded()
 
 void Line::DisplayMenu()
 {
-	if (ImGui::MenuItem("Vertical", NULL, vertical)) 
+	Line* left = GetNeighbour(true);
+	Line* right = GetNeighbour(false);
+	if (ImGui::MenuItem("Vertical", NULL, vertical, !(right->vertical || left->vertical)))
 	{
 		vertical = !vertical;
 		horizontal = false;
 	}
-	if (ImGui::MenuItem("Horizontal", NULL, horizontal)) 
+	if (ImGui::MenuItem("Horizontal", NULL, horizontal, !(right->horizontal || left->horizontal)))
 	{
 		horizontal = !horizontal;
 		vertical = false;
