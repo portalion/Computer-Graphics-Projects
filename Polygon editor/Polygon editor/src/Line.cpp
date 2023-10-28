@@ -84,6 +84,20 @@ float area(int x1, int y1, int x2, int y2,
 		x3 * (y1 - y2)) / 2.0);
 }
 
+void Line::UpdatePositionBasedOnPoints()
+{
+	 int movedPointIndex = points[0]->Moved() || points[0]->dragging ? 0 : 1;
+	 int otherPointIndex = 1 - movedPointIndex;
+
+	 if (horizontal)
+		 points[otherPointIndex]->SetPosition(points[otherPointIndex]->GetPosition().x, points[movedPointIndex]->GetPosition().y);
+	 
+	 if(vertical)
+		 points[otherPointIndex]->SetPosition(points[movedPointIndex]->GetPosition().x, points[otherPointIndex]->GetPosition().y);
+
+	 SetPosition(points[0]->GetPosition(), points[1]->GetPosition());
+}
+
 bool Line::IsHovered()
 {
 	if (points[0]->IsHovered() || points[1]->IsHovered()
@@ -117,14 +131,14 @@ void Line::SetPosition(Vertex v1, Vertex v2)
 
 void Line::UpdateBasedOnPointsBinded()
 {
-	if(m_PointDragged)
-		UpdatePositionBasedOnPoints();
-
 	if (points[0]->Moved() || points[1]->Moved() ||
 		points[0]->dragging || points[1]->dragging)
 		m_PointDragged = true;
 	else
 		m_PointDragged = false;
+	
+	if(m_PointDragged)
+		UpdatePositionBasedOnPoints();
 }
 
 void Line::DisplayMenu()
@@ -135,9 +149,7 @@ void Line::DisplayMenu()
 	{
 		vertical = !vertical;
 		horizontal = false;
-
 		if (vertical) points[0]->SetPosition(points[1]->GetPosition().x, points[0]->GetPosition().y);
-		
 	}
 	if (ImGui::MenuItem("Horizontal", NULL, horizontal, !(right->horizontal || left->horizontal)))
 	{
@@ -172,8 +184,6 @@ void Line::Update()
 		if (ImGui::IsMouseReleased(ImGuiMouseButton_Left))
 			dragging = false;
 	}
-
-
 }
 
 void Line::Draw()

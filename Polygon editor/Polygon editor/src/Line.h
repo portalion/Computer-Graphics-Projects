@@ -38,7 +38,7 @@ public:
 	bool vertical = false;
 	bool horizontal = false;
 
-	inline void UpdatePositionBasedOnPoints() { SetPosition(points[0]->GetPosition(), points[1]->GetPosition()); }
+	void UpdatePositionBasedOnPoints();
 	bool IsHovered();
 	void SetPosition(Vertex v1, Vertex v2);
 	void UpdateBasedOnPointsBinded();
