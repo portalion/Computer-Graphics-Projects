@@ -13,6 +13,8 @@
 #include "Point.h"
 #include "Line.h"
 
+#include <windows.h>
+
 void Polygon::MoveByMouse()
 {
     Vertex delta =
@@ -206,8 +208,6 @@ void Polygon::Update()
 {
     auto& io = ImGui::GetIO();
     Vertex CurrentMousePos = { io.MousePos.x, Scene::m_Height - io.MousePos.y };
-    m_HoveredPointIndex = -1;
-    m_HoveredLineIndex = -1;
 
     if (m_Dragging)
     {
@@ -270,11 +270,26 @@ void Polygon::Update()
     }
     for (int i = 0; i < m_Lines.size(); i++)
         m_Lines[i]->UpdatePositionBasedOnPoints();
+
+    if (m_HoveredLineIndex != -1 && io.MouseClicked[ImGuiMouseButton_Right])
+    {
+        m_CurrentPopupLineIndex = m_HoveredLineIndex;
+        ImGui::OpenPopup("LinePopup");
+    }
 }
 
 void Polygon::DisplayMenu()
 {
     int tempActivePointIndex = m_ActivePointIndex;
+    m_HoveredPointIndex = -1;
+    m_HoveredLineIndex = -1;
+
+    if (ImGui::BeginPopupContextVoid("LinePopup"))
+    {
+        m_Lines[m_CurrentPopupLineIndex]->DisplayMenu();
+        ImGui::EndPopup();
+    }
+
     if (!ImGui::BeginChild("Polygon Editor"))
     {
         ImGui::EndChild();
@@ -295,6 +310,18 @@ void Polygon::DisplayMenu()
     ImGui::Checkbox("Should display lines for new point", &m_ShouldDisplayCursor);
 
     if (m_ActivePointIndex >= 0) m_Points[m_ActivePointIndex]->DisplayMenu();
+    ImGui::SeparatorText("Lines Menu");
+    std::string tmp = "Line ";
+    for (int i = 0; i < m_Lines.size(); i++)
+    {
+        if (ImGui::IsItemHovered()) m_HoveredLineIndex = i;
+        if (ImGui::BeginMenu((tmp + std::to_string(i)).c_str()))
+        {
+            m_Lines[i]->DisplayMenu();
+            ImGui::EndMenu();
+        }
+    }
+
     ImGui::EndChild();
     if(tempActivePointIndex >= 0 && tempActivePointIndex < m_Points.size()) m_ActivePointIndex = tempActivePointIndex;
 }

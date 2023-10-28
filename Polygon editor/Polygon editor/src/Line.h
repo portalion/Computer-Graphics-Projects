@@ -38,6 +38,7 @@ public:
 	bool IsHovered();
 	void SetPosition(Vertex v1, Vertex v2);
 	void UpdateBasedOnPointsBinded();
+	void DisplayMenu();
 	void Update();
 	void Draw();
 

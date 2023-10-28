@@ -120,6 +120,12 @@ void Line::UpdateBasedOnPointsBinded()
 		m_PointDragged = false;
 }
 
+void Line::DisplayMenu()
+{
+	if (ImGui::MenuItem("Vertical", NULL, false)) {}
+	if (ImGui::MenuItem("Horizontal", NULL, false)) {}
+}
+
 void Line::Update()
 {
 	if (dragging)

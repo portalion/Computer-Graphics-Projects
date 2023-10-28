@@ -21,6 +21,7 @@ private:
 	int m_ActivePointIndex = -1;
 	int m_HoveredPointIndex = -1;
 	int m_HoveredLineIndex = -1;
+	int m_CurrentPopupLineIndex = -1;
 
 	Point* m_ExpectedPointPosition;
 	Line* m_ExpectedLinePositions;
