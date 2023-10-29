@@ -119,10 +119,24 @@ float area(int x1, int y1, int x2, int y2,
 		x3 * (y1 - y2)) / 2.0);
 }
 
+void Line::AddRelation(bool horizontal)
+{
+	int movedPointIndex = points[0]->Moved() || points[0]->dragging ? 0 : 1;
+	int otherPointIndex = 1 - movedPointIndex;
+
+	this->horizontal = horizontal;
+	this->vertical = !horizontal;
+
+	if (horizontal)
+		points[otherPointIndex]->SetPosition(points[otherPointIndex]->GetPosition().x, points[movedPointIndex]->GetPosition().y);
+	else
+		points[otherPointIndex]->SetPosition(points[movedPointIndex]->GetPosition().x, points[otherPointIndex]->GetPosition().y);
+}
+
 void Line::UpdatePositionBasedOnPoints()
 {
-	 int movedPointIndex = points[0]->Moved() || points[0]->dragging ? 0 : 1;
-	 int otherPointIndex = 1 - movedPointIndex;
+	int movedPointIndex = points[0]->Moved() || points[0]->dragging ? 0 : 1;
+	int otherPointIndex = 1 - movedPointIndex;
 
 	 if (horizontal)
 		 points[otherPointIndex]->SetPosition(points[otherPointIndex]->GetPosition().x, points[movedPointIndex]->GetPosition().y);

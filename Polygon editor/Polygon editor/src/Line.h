@@ -39,6 +39,7 @@ public:
 	bool vertical = false;
 	bool horizontal = false;
 
+	void AddRelation(bool horizontal);
 	void UpdatePositionBasedOnPoints();
 	bool IsHovered();
 	void SetPosition(Vertex v1, Vertex v2);

@@ -138,6 +138,27 @@ void Scene::Run()
     currentShader->SetUniform4f("u_Color", 0.f, 1.f, 0.f, 1.0f);
     currentShader->SetUniformMat4f("u_Projection", m_Projection);
 
+    AddNewPolygon();
+    polygons[0]->AddPointAfterActive({ 500.f, 500.f });
+    polygons[0]->AddPointAfterActive({ 500.f, 800.f });
+    polygons[0]->AddPointAfterActive({ 800.f, 800.f });
+    polygons[0]->AddPointAfterActive({ 800.f, 500.f });
+    polygons[0]->m_Lines[0]->AddRelation(true);
+    polygons[0]->m_Lines[1]->AddRelation(false);
+    polygons[0]->m_Lines[2]->AddRelation(true);
+    polygons[0]->m_Lines[3]->AddRelation(false);
+
+    AddNewPolygon();
+    polygons[1]->AddPointAfterActive({ 900.f, 500.f });
+    polygons[1]->AddPointAfterActive({ 900.f, 800.f });
+    polygons[1]->AddPointAfterActive({ 1200.f, 800.f });
+    polygons[1]->AddPointAfterActive({ 1200.f, 500.f });
+    polygons[1]->AddPointAfterActive({ 1400.f, 500.f });
+    polygons[1]->m_Lines[0]->AddRelation(true);
+    polygons[1]->m_Lines[1]->AddRelation(false);
+    polygons[1]->m_Lines[2]->AddRelation(true);
+    polygons[1]->m_Lines[3]->AddRelation(false);
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {

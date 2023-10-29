@@ -63,5 +63,7 @@ public:
 	void Update();
 	void DisplayMenu();
 	void Draw(bool isHovered);
+
+	friend class Scene;
 };
 
