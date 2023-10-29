@@ -12,6 +12,7 @@
 
 Scene* Scene::m_Instance = nullptr;
 Shader* Scene::currentShader = nullptr;
+bool Scene::BresenhamLine = false;
 
 
 void Scene::AddNewPolygon()
@@ -71,6 +72,8 @@ void Scene::DisplayMenu()
     ImGui::SetNextWindowSize(ImVec2(400, main_viewport->WorkSize.y), ImGuiCond_FirstUseEver);
 
     ImGui::Begin("Main Menu", nullptr, window_flags);
+    ImGui::Checkbox("Use bresenhamAlgorithm", &BresenhamLine);
+
     ImGui::BeginTabBar("Main Polygons Bar", ImGuiTabBarFlags_TabListPopupButton);
 
     if (ImGui::TabItemButton("+", ImGuiTabItemFlags_Trailing | ImGuiTabItemFlags_NoTooltip))

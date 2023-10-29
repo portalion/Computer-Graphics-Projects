@@ -29,6 +29,7 @@ private:
 public:
 	static const int m_Width = 1600;
 	static const int m_Height = 900;
+	static bool BresenhamLine;
 	static Shader* currentShader;
 	
 	GLFWwindow* window;

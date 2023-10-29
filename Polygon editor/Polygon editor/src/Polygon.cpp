@@ -199,8 +199,19 @@ void Polygon::DrawExpectedPoint()
         m_ExpectedPointPosition->Draw();
 
         if (m_Points.empty()) return;
-        m_ExpectedLinePositions[0].Draw();
-        m_ExpectedLinePositions[1].Draw();
+        if (Scene::BresenhamLine)
+        {
+            Scene::BresenhamLine = false;
+            m_ExpectedLinePositions[0].Draw();
+            m_ExpectedLinePositions[1].Draw();
+            Scene::BresenhamLine = true;
+        }
+        else
+        {
+            m_ExpectedLinePositions[0].Draw();
+            m_ExpectedLinePositions[1].Draw();
+        }
+        
     }
 }
 
@@ -276,6 +287,13 @@ void Polygon::Update()
         m_CurrentPopupLineIndex = m_HoveredLineIndex;
         ImGui::OpenPopup("LinePopup");
     }
+    if (m_CurrentPopupLineIndex != -1 && ImGui::BeginPopupContextVoid("LinePopup"))
+    {
+        m_Lines[m_CurrentPopupLineIndex]->DisplayMenu();
+        ImGui::EndPopup();
+    }
+    else
+        m_CurrentPopupLineIndex = -1;
 }
 
 void Polygon::DisplayMenu()
@@ -283,12 +301,6 @@ void Polygon::DisplayMenu()
     int tempActivePointIndex = m_ActivePointIndex;
     m_HoveredPointIndex = -1;
     m_HoveredLineIndex = -1;
-
-    if (ImGui::BeginPopupContextVoid("LinePopup"))
-    {
-        m_Lines[m_CurrentPopupLineIndex]->DisplayMenu();
-        ImGui::EndPopup();
-    }
 
     if (!ImGui::BeginChild("Polygon Editor"))
     {

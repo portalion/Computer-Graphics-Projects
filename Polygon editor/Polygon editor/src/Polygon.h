@@ -26,6 +26,7 @@ private:
 	Point* m_ExpectedPointPosition;
 	Line* m_ExpectedLinePositions;
 	bool m_IsCursorVisible;
+	int m_DisplayOffset = 10;
 
 	bool m_ShouldDisplayCursor;
 	bool m_Dragging;

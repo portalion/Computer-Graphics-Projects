@@ -250,7 +250,57 @@ void Line::Draw()
 	if (vertical || horizontal)
 		DrawIcon();
 
-	Scene::currentShader->SetUniformMat4f("u_Model", model);
-	GLCall(glBindVertexArray(m_Vao));
-	GLCall(glDrawArrays(GL_LINES, 0, 2));
+	if (Scene::BresenhamLine && points[0] && points[1])
+	{
+		std::vector<float> vertices;
+		int x2 = points[0]->GetPosition().x;
+		int y2 = points[0]->GetPosition().y;
+		int x1 = points[1]->GetPosition().x;
+		int y1 = points[1]->GetPosition().y;
+		int dx = abs(x2 - x1);
+		int dy = -abs(y2 - y1);
+		int sx = (x1 < x2) ? 1 : -1;
+		int sy = (y1 < y2) ? 1 : -1;
+		int err = dx + dy;
+		Scene::currentShader->SetUniformMat4f("u_Model", glm::mat4(1.f));
+		while (true) 
+		{
+			float vertices[] = { x1 , y1 };
+			unsigned int VBO, VAO;
+			glGenVertexArrays(1, &VAO);
+			glGenBuffers(1, &VBO);
+
+			glBindVertexArray(VAO);
+			glBindBuffer(GL_ARRAY_BUFFER, VBO);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(0);
+			glBindVertexArray(VAO);
+			glDrawArrays(GL_POINTS, 0, 1); // Draw a single point (pixel)
+
+			if (x1 == x2 && y1 == y2) {
+				break;
+			}
+
+			int e2 = 2 * err;
+			if (e2 >= dy) {
+				err += dy;
+				x1 += sx;
+			}
+			if (e2 <= dx) {
+				err += dx;
+				y1 += sy;
+			}
+
+			glDeleteBuffers(1, &VBO);
+			glDeleteVertexArrays(1, &VAO);
+		}
+
+	}
+	else
+	{
+		Scene::currentShader->SetUniformMat4f("u_Model", model);
+		GLCall(glBindVertexArray(m_Vao));
+		GLCall(glDrawArrays(GL_LINES, 0, 2));
+	}
 }
