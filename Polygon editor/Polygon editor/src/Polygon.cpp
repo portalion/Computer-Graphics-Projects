@@ -13,7 +13,43 @@
 #include "Point.h"
 #include "Line.h"
 
-#include <windows.h>
+float length(Vertex p1, Vertex p2)
+{
+    Vertex vec = { p2.x - p1.x, p2.y - p1.y };
+    return sqrt(vec.x * vec.x + vec.y * vec.y);
+}
+
+void Polygon::DrawOffsetPolygon()
+{
+    std::vector<Vertex> offsetPolygon;
+    
+    for (int i = 0; i < m_Points.size(); i++)
+    {
+        int next = (i + 1) % m_Points.size();
+        float vecLen = length(m_Points[i]->GetPosition(), m_Points[next]->GetPosition());
+        float x = m_Points[i]->GetPosition().x - m_Points[next]->GetPosition().x;
+        float y = m_Points[i]->GetPosition().y - m_Points[next]->GetPosition().y;
+        offsetPolygon.push_back(
+            { 
+                -y / vecLen * m_DisplayOffset + m_Points[i]->GetPosition().x,
+                x / vecLen * m_DisplayOffset + m_Points[i]->GetPosition().y
+            });
+        offsetPolygon.push_back(
+            {
+                -y / vecLen * m_DisplayOffset + m_Points[next]->GetPosition().x,
+                x / vecLen * m_DisplayOffset + m_Points[next]->GetPosition().y
+            });
+    }
+
+    for (int i = 1; i < offsetPolygon.size(); i++)
+    {
+        Line test(offsetPolygon[i - 1], offsetPolygon[i]);
+        test.Draw();
+    }
+    if (offsetPolygon.empty())return;
+    Line last(offsetPolygon[offsetPolygon.size() - 1], offsetPolygon[0]);
+    last.Draw();
+}
 
 void Polygon::MoveByMouse()
 {
@@ -309,6 +345,7 @@ void Polygon::DisplayMenu()
     }
 
     ImGui::PushItemWidth(180);
+    ImGui::SliderInt("Select Offset", &m_DisplayOffset, -100, 100);
     ImGui::SliderInt("Select Active Vertice", &tempActivePointIndex, 0, static_cast<unsigned int>(m_Points.size()) - 1);
     ImGui::SameLine(); HelpMarker("CTRL+click to input value.");
     ImGui::PopItemWidth();
@@ -341,6 +378,8 @@ void Polygon::DisplayMenu()
 
 void Polygon::Draw(bool isHovered)
 {
+    if (m_DisplayOffset != 0)
+        DrawOffsetPolygon();
     if (isHovered)
     {
         DrawNonActive(true);

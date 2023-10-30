@@ -42,6 +42,7 @@ private:
 		else return index + 1;
 	}
 
+	void DrawOffsetPolygon();
 	void MoveByMouse();
 	void DrawActive();
 	void DrawNonActive(bool isHovered);
