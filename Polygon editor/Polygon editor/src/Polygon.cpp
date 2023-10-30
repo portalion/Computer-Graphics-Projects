@@ -18,27 +18,122 @@ float length(Vertex p1, Vertex p2)
     Vertex vec = { p2.x - p1.x, p2.y - p1.y };
     return sqrt(vec.x * vec.x + vec.y * vec.y);
 }
+float crossProduct(const Vertex & p1, const Vertex & p2, const Vertex & p3) {
+    return (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x);
+}
+
+bool doLineSegmentsIntersect(Vertex p1, Vertex p2, Vertex p3, Vertex p4) {
+    float cp1 = crossProduct(p1, p2, p3);
+    float cp2 = crossProduct(p1, p2, p4);
+    float cp3 = crossProduct(p3, p4, p1);
+    float cp4 = crossProduct(p3, p4, p2);
+
+    if (((cp1 > 0 && cp2 < 0) || (cp1 < 0 && cp2 > 0)) &&
+        ((cp3 > 0 && cp4 < 0) || (cp3 < 0 && cp4 > 0))) {
+        return true;
+    }
+
+    if (cp1 == 0 && cp2 == 0 && cp3 == 0 && cp4 == 0) {
+        if (p1.x > p2.x) std::swap(p1, p2);
+        if (p3.x > p4.x) std::swap(p3, p4);
+
+        if (p1.x <= p4.x && p3.x <= p2.x &&
+            p1.y <= p4.y && p3.y <= p2.y) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+Vertex findIntersection(const Vertex& p1, const Vertex& p2, const Vertex& p3, const Vertex& p4) {
+    float A1 = p2.y - p1.y;
+    float B1 = p1.x - p2.x;
+    float C1 = A1 * p1.x + B1 * p1.y;
+
+    float A2 = p4.y - p3.y;
+    float B2 = p3.x - p4.x;
+    float C2 = A2 * p3.x + B2 * p3.y;
+
+    float det = A1 * B2 - A2 * B1;
+
+    float x = (C1 * B2 - C2 * B1) / det;
+    float y = (A1 * C2 - A2 * C1) / det;
+
+    return { x, y };
+}
 
 void Polygon::DrawOffsetPolygon()
 {
     std::vector<Vertex> offsetPolygon;
     
+    bool clock = false;
+
     for (int i = 0; i < m_Points.size(); i++)
     {
         int next = (i + 1) % m_Points.size();
-        float vecLen = length(m_Points[i]->GetPosition(), m_Points[next]->GetPosition());
-        float x = m_Points[i]->GetPosition().x - m_Points[next]->GetPosition().x;
-        float y = m_Points[i]->GetPosition().y - m_Points[next]->GetPosition().y;
+        int current = i;
+        float vecLen = length(m_Points[current]->GetPosition(), m_Points[next]->GetPosition());
+        int x = m_Points[current]->GetPosition().x - m_Points[next]->GetPosition().x;
+        int y = m_Points[current]->GetPosition().y - m_Points[next]->GetPosition().y;
         offsetPolygon.push_back(
             { 
-                -y / vecLen * m_DisplayOffset + m_Points[i]->GetPosition().x,
-                x / vecLen * m_DisplayOffset + m_Points[i]->GetPosition().y
+                -y / vecLen * m_DisplayOffset + m_Points[current]->GetPosition().x,
+                 x / vecLen * m_DisplayOffset + m_Points[current]->GetPosition().y
             });
-        offsetPolygon.push_back(
+        bool shouldAdd = true;
+        if(offsetPolygon.size() > 1)
+        for (int j = 0; j < offsetPolygon.size() - 2; j++)
+        {
+            if (doLineSegmentsIntersect(offsetPolygon[j], offsetPolygon[j + 1],
+                offsetPolygon[offsetPolygon.size() - 2], offsetPolygon[offsetPolygon.size() - 1]))
+            {
+                Vertex intersectionPoint = findIntersection(offsetPolygon[j], offsetPolygon[j + 1],
+                    offsetPolygon[offsetPolygon.size() - 2], offsetPolygon[offsetPolygon.size() - 1]);
+                if (offsetPolygon.size() - j - 3 <= j + 2)
+                {
+                    offsetPolygon.erase(offsetPolygon.begin() + j + 1, offsetPolygon.end() - 1);
+                    offsetPolygon.insert(offsetPolygon.begin() + j + 1, intersectionPoint);
+                }
+                else
+                {
+                    offsetPolygon.erase(offsetPolygon.begin(), offsetPolygon.begin() + j + 1);
+                    offsetPolygon.erase(offsetPolygon.end() - 1, offsetPolygon.end());
+                    offsetPolygon.push_back(intersectionPoint);
+                    shouldAdd = false;
+                }
+                break;
+            }
+        }
+        if(shouldAdd)offsetPolygon.push_back(
             {
                 -y / vecLen * m_DisplayOffset + m_Points[next]->GetPosition().x,
-                x / vecLen * m_DisplayOffset + m_Points[next]->GetPosition().y
+                 x / vecLen * m_DisplayOffset + m_Points[next]->GetPosition().y
             });
+        
+
+        for (int j = 0; j < offsetPolygon.size() - 2; j++)
+        {
+            if (doLineSegmentsIntersect(offsetPolygon[j], offsetPolygon[j + 1],
+                offsetPolygon[offsetPolygon.size() - 2], offsetPolygon[offsetPolygon.size() - 1]))
+            {
+                Vertex intersectionPoint = findIntersection(offsetPolygon[j], offsetPolygon[j + 1],
+                    offsetPolygon[offsetPolygon.size() - 2], offsetPolygon[offsetPolygon.size() - 1]);
+
+                if (offsetPolygon.size() - j - 3 <= j + 2)
+                {
+                    offsetPolygon.erase(offsetPolygon.begin() + j + 1, offsetPolygon.end() - 1);
+                    offsetPolygon.insert(offsetPolygon.begin() + j + 1, intersectionPoint);
+                }
+                else
+                {
+                    offsetPolygon.erase(offsetPolygon.begin(), offsetPolygon.begin() + j + 1);
+                    offsetPolygon.erase(offsetPolygon.end() - 1, offsetPolygon.end());
+                    offsetPolygon.push_back(intersectionPoint);
+                }
+                break;
+            }
+        }
     }
 
     for (int i = 1; i < offsetPolygon.size(); i++)
@@ -318,7 +413,7 @@ void Polygon::Update()
     for (int i = 0; i < m_Lines.size(); i++)
         m_Lines[i]->UpdatePositionBasedOnPoints();
 
-    if (m_HoveredLineIndex != -1 && io.MouseClicked[ImGuiMouseButton_Right])
+    /*if (m_HoveredLineIndex != -1 && io.MouseClicked[ImGuiMouseButton_Right])
     {
         m_CurrentPopupLineIndex = m_HoveredLineIndex;
         ImGui::OpenPopup("LinePopup");
@@ -329,7 +424,7 @@ void Polygon::Update()
         ImGui::EndPopup();
     }
     else
-        m_CurrentPopupLineIndex = -1;
+        m_CurrentPopupLineIndex = -1;*/
 }
 
 void Polygon::DisplayMenu()
