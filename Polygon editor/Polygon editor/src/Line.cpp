@@ -16,7 +16,8 @@
  unsigned int Line:: m_Vbo = 0;
 
  float Line::m_Vertices[4];
-
+ int Line::m_Freeid = 0;
+ 
 void Line::GenerateModel()
 {
 	m_Vertices[0] = 0.f;
@@ -46,7 +47,6 @@ Line* Line::GetNeighbour(bool left)
 
 void Line::DrawIcon()
 {
-	static int id = 0;
 	const int size = 20;
 	const int offset = 10;
 	int posX = points[0]->GetPosition().x / 2 + points[1]->GetPosition().x / 2;
@@ -67,7 +67,7 @@ void Line::DrawIcon()
 
 	ImGui::SetNextWindowPos(ImVec2(posX - 5, posY - 5), ImGuiCond_Always);
 	ImGui::SetNextWindowSize(ImVec2(25, 25), ImGuiCond_Always);
-	ImGui::Begin(("icon" + std::to_string(id++)).c_str(), NULL, windowFlags);
+	ImGui::Begin(("icon" + std::to_string(id)).c_str(), NULL, windowFlags);
 	ImVec2 rectPosition(posX, posY);  // Position of the rectangle
 	ImU32 color = IM_COL32(255, 0, 0, 255);  // Red color
 
@@ -88,6 +88,7 @@ void Line::DeleteModel()
 Line::Line(Vertex v1, Vertex v2)
 	:model(glm::mat4(1.f)), m_PointDragged{false}, dragging{ false }
 {
+	id = m_Freeid++;
 	if (m_Vbo == 0 || m_Vao == 0)
 		GenerateModel();
 
@@ -97,6 +98,7 @@ Line::Line(Vertex v1, Vertex v2)
 Line::Line(Point* first, Point* second)
 	:model(glm::mat4(1.f)), m_PointDragged{ false }, dragging{false}
 {
+	id = m_Freeid++;
 	if (m_Vbo == 0 || m_Vao == 0)
 		GenerateModel();
 

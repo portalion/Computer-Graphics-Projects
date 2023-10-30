@@ -13,6 +13,7 @@ enum class LinePointPosition
 class Line
 {
 private:
+	static int m_Freeid;
 	static unsigned int m_Vao;
 	static unsigned int m_Vbo;
 
@@ -21,7 +22,7 @@ private:
 	static void GenerateModel();
 
 	bool m_PointDragged;
-
+	int id;
 	Point* points[2];
 
 	Line* GetNeighbour(bool left);

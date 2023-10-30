@@ -136,14 +136,30 @@ void Polygon::DrawOffsetPolygon()
         }
     }
 
-    for (int i = 1; i < offsetPolygon.size(); i++)
+    if (Scene::BresenhamLine)
     {
-        Line test(offsetPolygon[i - 1], offsetPolygon[i]);
-        test.Draw();
+        Scene::BresenhamLine = false;
+        for (int i = 1; i < offsetPolygon.size(); i++)
+        {
+            Line test(offsetPolygon[i - 1], offsetPolygon[i]);
+            test.Draw();
+        }
+        if (offsetPolygon.empty())return;
+        Line last(offsetPolygon[offsetPolygon.size() - 1], offsetPolygon[0]);
+        last.Draw();
+        Scene::BresenhamLine = true;
     }
-    if (offsetPolygon.empty())return;
-    Line last(offsetPolygon[offsetPolygon.size() - 1], offsetPolygon[0]);
-    last.Draw();
+    else
+    {
+        for (int i = 1; i < offsetPolygon.size(); i++)
+        {
+            Line test(offsetPolygon[i - 1], offsetPolygon[i]);
+            test.Draw();
+        }
+        if (offsetPolygon.empty())return;
+        Line last(offsetPolygon[offsetPolygon.size() - 1], offsetPolygon[0]);
+        last.Draw();
+    }
 }
 
 void Polygon::MoveByMouse()
@@ -413,7 +429,7 @@ void Polygon::Update()
     for (int i = 0; i < m_Lines.size(); i++)
         m_Lines[i]->UpdatePositionBasedOnPoints();
 
-    /*if (m_HoveredLineIndex != -1 && io.MouseClicked[ImGuiMouseButton_Right])
+    if (m_HoveredLineIndex != -1 && io.MouseClicked[ImGuiMouseButton_Right])
     {
         m_CurrentPopupLineIndex = m_HoveredLineIndex;
         ImGui::OpenPopup("LinePopup");
@@ -424,7 +440,7 @@ void Polygon::Update()
         ImGui::EndPopup();
     }
     else
-        m_CurrentPopupLineIndex = -1;*/
+        m_CurrentPopupLineIndex = -1;
 }
 
 void Polygon::DisplayMenu()
