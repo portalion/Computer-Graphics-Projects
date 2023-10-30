@@ -172,8 +172,6 @@ void Scene::Run()
         DisplayMenu();
         Update();
         Draw();
-
-        ImGui::ShowDemoWindow(); // Show demo window! :)
         
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
