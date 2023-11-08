@@ -1,0 +1,8 @@
+Opis algorytmu wielokąta odsuniętego:
+Iterujemy po kazdej linii wielokąta, w trakcie każdej iteracji dodajemy dwa punkty będące odsunięte od iterowanej linii pod kątem prostym w odległości offset,
+sprawdzamy czy nowo stworzona linia przecina się z jedną z poprzednich. Jeśli następuje przecięcie usuwamy mniejszą ilość linii pomiędzy przeciętą a dostawianą i dodajemy pomiędzy nimi nowy punkt o współrzędnych punktu przecięcia.
+
+Opis implementacji relacji:
+1. Ustawienie relacji: ustawiając nową relację na linii wybieramy losowo jeden wierzchołek któremu ustawiamy odpowiednio wartość x lub y na identyczną do drugiego wierzchołka.
+2. Przesuwanie wierzchołka: przesuwając wierzchołek linii która ma relację przesuwamy obydwa jej wierzchołki.
+3. Przesuwanie linii: Przesuwając linię sąsiadującą z linią z relacją odpowiednio modyfikujemy wartości w drugim wierzchołku linii posiadającej relację, tak aby relacja pozostała zachowana
