@@ -5,8 +5,11 @@
 #include <iostream>
 
 #include "Utils.h"
-#include "Shader.h"
+#include "..\..\OpenglEngine\src\Utils.h"
+#include "..\..\OpenglEngine\src\Shader.h"
 #include "Polygon.h"
+
+using namespace MyEngine;
 
 class Scene
 {
