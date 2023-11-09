@@ -7,9 +7,10 @@
 void Shape::GenerateVertices()
 {
 	m_Vertices.clear();
-	for (float height = 0; height < m_Height + s; height += m_Height / s)
-		for (float width = 0; width < m_Width + t; width += m_Width / t)
-			m_Vertices.push_back({ width, height, 0.f });
+
+	for(int i = 0; i < s + 1; i++)
+		for(int j = 0; j < t + 1; j++)
+			m_Vertices.push_back({ m_Width / t * j, m_Height / s * i, 0.f });
 
 	m_Indices.clear();
 
@@ -36,7 +37,7 @@ void Shape::GenerateVertices()
 }
 
 Shape::Shape()
-	:s{ 6 }, t{ 5 }
+	:s{ 100 }, t{ 100 }
 {
 	glGenBuffers(1, &m_VBO);
 	glGenBuffers(1, &m_IBO);
