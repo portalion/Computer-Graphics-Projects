@@ -4,12 +4,11 @@
 #include "Utils.h"
 #include <iostream>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include "Shape.h"
 
 int main(void)
 {
-    GLFWwindow* window;
-
     /* Initialize the library */
     if (!glfwInit())
         return -1;
@@ -18,8 +17,14 @@ int main(void)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(Globals::Width, Globals::Height, "Hello World", NULL, NULL);
+    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+    Globals::Width = mode->width;
+    Globals::Height = mode->height;
+    Globals::ProjectionMatrix = glm::ortho(0.f, static_cast<float>(Globals::Width), 0.f, static_cast<float>(Globals::Height), 0.f, 10.f);
+
+    GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, "3D triangles", monitor, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -34,13 +39,15 @@ int main(void)
     if (glewInit() != GLEW_OK)
         std::cout << "GLEW ERROR" << std::endl;
 
-    std::cout << "SIZEOF GLM VEC3: " << sizeof(glm::vec3) << "SIZEOF 3 floats: " << sizeof(float) * 3 << std::endl;
     
     Shape mainShape;
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
+        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+            glfwSetWindowShouldClose(window, GLFW_TRUE);
+
         /* Render here */
         GLCall(glClearColor(0.1f, 0.2f, 0.2f, 1.0f));
         GLCall(glClear(GL_COLOR_BUFFER_BIT));

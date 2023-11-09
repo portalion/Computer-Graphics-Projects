@@ -17,6 +17,7 @@ class Globals
 private:
     virtual void doNotUse() = 0;
 public:
-    static const int Width = 1920;
-    static const int Height = 1080;
+    static int Width;
+    static int Height;
+    static glm::mat4 ProjectionMatrix;
 };
