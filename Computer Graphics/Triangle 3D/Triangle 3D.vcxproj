@@ -155,9 +155,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Shape.cpp" />
-    <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Utils.cpp" />
     <ClCompile Include="src\vendor\glm\detail\glm.cpp" />
     <ClCompile Include="src\vendor\imgui\imgui.cpp" />
     <ClCompile Include="src\vendor\imgui\imgui_demo.cpp" />
@@ -168,11 +168,10 @@
     <ClCompile Include="src\vendor\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\vendor\imgui\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="src\vendor\stb_image\stb_image.cpp" />
-    <ClCompile Include="src\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Shape.h" />
     <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\Utils.h" />
     <ClInclude Include="src\vendor\glm\common.hpp" />
     <ClInclude Include="src\vendor\glm\detail\compute_common.hpp" />
     <ClInclude Include="src\vendor\glm\detail\compute_vector_relational.hpp" />
@@ -466,11 +465,12 @@
     <ClInclude Include="src\vendor\imgui\imstb_truetype.h" />
     <ClInclude Include="src\vendor\imgui\misc\cpp\imgui_stdlib.h" />
     <ClInclude Include="src\vendor\stb_image\stb_image.h" />
-    <ClInclude Include="src\Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\Background.shader" />
-    <None Include="res\shaders\Basic.shader" />
+    <None Include="res\shaders\Basic.fs" />
+    <None Include="res\shaders\Basic.vs" />
+    <None Include="res\shaders\PointToCircle.gs" />
     <None Include="src\vendor\glm\detail\func_common.inl" />
     <None Include="src\vendor\glm\detail\func_common_simd.inl" />
     <None Include="src\vendor\glm\detail\func_exponential.inl" />

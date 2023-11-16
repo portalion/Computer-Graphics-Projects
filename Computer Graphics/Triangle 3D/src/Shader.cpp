@@ -1,5 +1,4 @@
 #include "Shader.h"
-
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -7,17 +6,15 @@
 
 #include "Utils.h"
 
-Shader::Shader(const std::string& filepath)
-    :filepath(filepath), m_RendererID(0)
+Shader::Shader()
 {
-    ShaderProgramSource source = ParseShader(filepath);
-    m_RendererID = CreateShader(source.VertexSource, source.FragmentSource);
-
+    for (int i = 0; i < 3; i++)
+        shadersUsed[i] = false;
 }
 
 Shader::~Shader()
 {
-    GLCall(glDeleteProgram(m_RendererID));
+    glDeleteProgram(m_RendererID);
 }
 
 void Shader::Bind() const
@@ -28,6 +25,26 @@ void Shader::Bind() const
 void Shader::Unbind() const
 {
     GLCall(glUseProgram(0));
+}
+
+void Shader::AddShader(const std::string& filename, ShaderType type)
+{
+    unsigned int shaderTypeCompilation = 0;
+    switch (type)
+    {
+    case ShaderType::VERTEX_SHADER:
+        shaderTypeCompilation = GL_VERTEX_SHADER;
+        break;
+    case ShaderType::GEOMETRY_SHADER:
+        shaderTypeCompilation = GL_GEOMETRY_SHADER;
+        break;
+    case ShaderType::FRAGMENT_SHADER:
+        shaderTypeCompilation = GL_FRAGMENT_SHADER;
+        break;
+    }
+
+    shaders[static_cast<size_t>(type)] = CompileShader(shaderTypeCompilation, ParseShader(filename));
+    shadersUsed[static_cast<size_t>(type)] = true;
 }
 
 void Shader::SetUniform1i(const std::string& name, int value)
@@ -64,51 +81,33 @@ int Shader::GetUniformLocation(const std::string& name)
     return location;
 }
 
-unsigned int Shader::CreateShader(const std::string& vertexShader, const std::string& fragmentShader)
+void Shader::CreateShader()
 {
     unsigned int program = glCreateProgram();
-    unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
-    unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
 
-    glAttachShader(program, vs);
-    glAttachShader(program, fs);
+    for(int i = 0; i < 3; i++)
+        if(shadersUsed[i]) glAttachShader(program, shaders[i]);
+
     glLinkProgram(program);
     glValidateProgram(program);
 
-    glDeleteShader(vs);
-    glDeleteShader(fs);
+    for (int i = 0; i < 3; i++)
+        if (shadersUsed[i]) glDeleteShader(shaders[i]);
 
-    return program;
+    m_RendererID = program;
 }
 
-ShaderProgramSource Shader::ParseShader(const std::string& filepath)
+std::string Shader::ParseShader(const std::string& filepath)
 {
     std::ifstream ifs(filepath);
 
-    enum class ShaderType
-    {
-        NONE = -1, VERTEX = 0, FRAGMENT = 1
-    };
-
     std::string line;
-    std::stringstream ss[2];
-    ShaderType type = ShaderType::NONE;
-    while (getline(ifs, line))
-    {
-        if (line.find("#shader") != std::string::npos)
-        {
-            if (line.find("vertex") != std::string::npos)
-                type = ShaderType::VERTEX;
-            else if (line.find("fragment") != std::string::npos)
-                type = ShaderType::FRAGMENT;
-        }
-        else
-        {
-            ss[(int)type] << line << '\n';
-        }
-    }
+    std::stringstream ss;
 
-    return { ss[0].str(), ss[1].str() };
+    while (getline(ifs, line))
+        ss << line << '\n';
+    
+    return ss.str();
 }
 
 unsigned int Shader::CompileShader(unsigned int type, const std::string& source)

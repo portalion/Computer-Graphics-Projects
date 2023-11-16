@@ -3,10 +3,11 @@
 #include <unordered_map>
 #include "glm/glm.hpp"
 
-struct ShaderProgramSource
+enum class ShaderType
 {
-	std::string VertexSource;
-	std::string FragmentSource;
+	VERTEX_SHADER = 0,
+	GEOMETRY_SHADER = 1,
+	FRAGMENT_SHADER = 2
 };
 
 class Shader
@@ -16,12 +17,16 @@ private:
 	std::string filepath;
 	std::unordered_map<std::string, int> m_UniformLocationCache;
 
+	bool shadersUsed[3];
+	unsigned int shaders[3];
 public:
-	Shader(const std::string& filepath);
+	Shader();
 	~Shader();
 
+	void CreateShader();
 	void Bind() const;
 	void Unbind() const;
+	void AddShader(const std::string& filename, ShaderType type);
 
 	void SetUniform1i(const std::string& name, int value);
 	void SetUniform1f(const std::string& name, float value);
@@ -31,6 +36,5 @@ public:
 private:
 	int GetUniformLocation(const std::string& name);
 	unsigned int CompileShader(unsigned int type, const std::string& source);
-	unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader);
-	ShaderProgramSource ParseShader(const std::string& filepath);
+	std::string ParseShader(const std::string& filepath);
 };
