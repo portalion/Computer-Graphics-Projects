@@ -1,3 +1,4 @@
+#pragma once
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
@@ -9,3 +10,10 @@
 void GLClearError();
 
 bool GLLogCall(const char* function, const char* file, int line);
+
+namespace Globals
+{
+    extern int Height;
+    extern int Width;
+    extern glm::mat4 ProjectionMatrix;
+}

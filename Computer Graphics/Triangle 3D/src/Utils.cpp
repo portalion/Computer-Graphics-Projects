@@ -16,3 +16,10 @@ bool GLLogCall(const char* function, const char* file, int line)
     }
     return true;
 }
+
+namespace Globals
+{
+    int Height = 0;
+    int Width = 0;
+    glm::mat4 ProjectionMatrix;
+}
