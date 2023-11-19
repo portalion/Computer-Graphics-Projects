@@ -44,6 +44,7 @@ void ControlPoint::DrawAll()
 	if (m_VAO == 0 || m_VBO == 0) GeneratePoints();
 	usedShader.Bind();
 	usedShader.SetUniformMat4f("projectionMatrix", Globals::ProjectionMatrix);
+	usedShader.SetUniformMat4f("viewMatrix", Globals::ViewMatrix);
 	glBindVertexArray(m_VAO); 
 	glDrawArrays(GL_POINTS, 0, static_cast<unsigned int>(m_Positions.size()));
 }

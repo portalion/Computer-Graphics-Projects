@@ -53,6 +53,7 @@ void Shape::Draw()
 	basic.CreateShader();
 	basic.Bind();
 	basic.SetUniformMat4f("projectionMatrix", Globals::ProjectionMatrix);
+	basic.SetUniformMat4f("viewMatrix", Globals::ViewMatrix);
 	for (auto& triangle : m_Triangles)
 		triangle->Draw();
 }

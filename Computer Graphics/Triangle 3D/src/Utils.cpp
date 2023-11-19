@@ -22,4 +22,5 @@ namespace Globals
     int Height = 0;
     int Width = 0;
     glm::mat4 ProjectionMatrix;
+    glm::mat4 ViewMatrix;
 }

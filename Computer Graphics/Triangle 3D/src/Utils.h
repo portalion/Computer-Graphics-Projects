@@ -16,4 +16,5 @@ namespace Globals
     extern int Height;
     extern int Width;
     extern glm::mat4 ProjectionMatrix;
+    extern glm::mat4 ViewMatrix;
 }
