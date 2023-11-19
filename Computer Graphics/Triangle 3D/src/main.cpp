@@ -69,11 +69,6 @@ int main(void)
     
     const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
 
-    Shader basic;
-    basic.AddShader("res/shaders/Basic.vs", ShaderType::VERTEX_SHADER);
-    basic.AddShader("res/shaders/Basic.fs", ShaderType::FRAGMENT_SHADER);
-    basic.CreateShader();
-
     glm::vec3 triangleVertices[3] =
     {
         { 600.f, 500.f, 0.f },
@@ -81,8 +76,8 @@ int main(void)
         { 700.f, 500.f, 0.f }
     };
 
-    Triangle test(triangleVertices);
-    test.GenerateFillVertices();
+    Shape test;
+    test.GenerateTriangles();
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -107,8 +102,8 @@ int main(void)
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
         ImGui::End();
 
-        ControlPoint::DrawAll();
         test.Draw();
+        ControlPoint::DrawAll();
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

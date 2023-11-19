@@ -25,7 +25,7 @@ void ControlPoint::GeneratePoints()
 	
 	usedShader.AddShader("res/shaders/PointToCircle.vs", ShaderType::VERTEX_SHADER);
 	usedShader.AddShader("res/shaders/PointToCircle.gs", ShaderType::GEOMETRY_SHADER);
-	usedShader.AddShader("res/shaders/Basic.fs", ShaderType::FRAGMENT_SHADER);
+	usedShader.AddShader("res/shaders/PointToCircle.fs", ShaderType::FRAGMENT_SHADER);
 	usedShader.CreateShader();
 
 	glGenBuffers(1, &m_VBO);

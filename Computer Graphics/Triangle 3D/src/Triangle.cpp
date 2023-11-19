@@ -41,7 +41,7 @@ void Triangle::GenerateFillVertices()
 
 	std::vector<AETPointer> AET;
 
-	for (int y = ymin; y < ymax; y++)
+	for (int y = ymin; y <= ymax; y++)
 	{
 		for (int i = 0; i < 3; i++)
 		{
@@ -84,13 +84,6 @@ void Triangle::Draw()
 {
 	unsigned int m_VAO;
 	unsigned int m_VBO;
-
-	Shader basic;
-	basic.AddShader("res/shaders/Basic.vs", ShaderType::VERTEX_SHADER);
-	basic.AddShader("res/shaders/Basic.fs", ShaderType::FRAGMENT_SHADER);
-	basic.CreateShader();
-	basic.Bind();
-	basic.SetUniformMat4f("projectionMatrix", Globals::ProjectionMatrix);
 
 	glGenBuffers(1, &m_VBO);
 	glGenVertexArrays(1, &m_VAO);
