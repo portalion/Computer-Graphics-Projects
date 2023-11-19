@@ -6,9 +6,21 @@ int Shape::m_Height = static_cast<int>(Globals::Height * .8f);
 int Shape::m_Width = m_Height;
 int Shape::m_Position = 0;
 
+void Shape::CleanUp()
+{
+	for (int i = 0; i < m_Triangles.size(); i++)
+		delete m_Triangles[i];
+	m_Triangles.clear();
+}
+
+Shape::~Shape()
+{
+	CleanUp();
+}
+
 void Shape::GenerateTriangles()
 {
-	m_Triangles.clear();
+	CleanUp();
 	for (int i = 0; i < n; i++)
 	{
 		for (int j = 0; j < m; j++)
@@ -19,18 +31,18 @@ void Shape::GenerateTriangles()
 				{ m_Position + (i + 1) * m_Width / n, m_Position + j * m_Height / m, 0.f },
 				{ m_Position + i * m_Width / n, std::ceil(m_Position + (j + 1) * m_Height / m) + 1.f, 0.f }
 			};
-			m_Triangles.push_back(Triangle(triangleVertices));
+			m_Triangles.push_back(new Triangle(triangleVertices));
 			glm::vec3 triangleVertices2[3] =
 			{
 				{ m_Position + i * m_Width / n, std::ceil(m_Position + (j + 1) * m_Height / m) + 1.f, 0.f },
 				{ m_Position + (i + 1) * m_Width / n, std::ceil(m_Position + (j + 1) * m_Height / m) + 1.f, 0.f },
 				{ m_Position + (i + 1) * m_Width / n, m_Position + j * m_Height / m, 0.f }
 			};
-			m_Triangles.push_back(Triangle(triangleVertices2));
+			m_Triangles.push_back(new Triangle(triangleVertices2));
 		}
 	}
 	for (auto& triangle : m_Triangles)
-		triangle.GenerateFillVertices();
+		triangle->GenerateFillVertices();
 }
 
 void Shape::Draw()
@@ -42,5 +54,5 @@ void Shape::Draw()
 	basic.Bind();
 	basic.SetUniformMat4f("projectionMatrix", Globals::ProjectionMatrix);
 	for (auto& triangle : m_Triangles)
-		triangle.Draw();
+		triangle->Draw();
 }

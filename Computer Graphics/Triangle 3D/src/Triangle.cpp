@@ -7,6 +7,12 @@
 #include "Shader.h"
 #include "Utils.h"
 
+Triangle::~Triangle()
+{
+	glDeleteBuffers(1, &m_VBO);
+	glDeleteVertexArrays(1, &m_VAO);
+}
+
 float GetSlope(glm::vec3 p1, glm::vec3 p2)
 {
 	return (p2.y - p1.y) / (p2.x - p1.x);
@@ -16,6 +22,8 @@ Triangle::Triangle(glm::vec3 vertices[3])
 {
 	for (int i = 0; i < 3; i++)
 		m_Points[i] = vertices[i];
+	glGenBuffers(1, &m_VBO);
+	glGenVertexArrays(1, &m_VAO);
 }
 
 void Triangle::GenerateFillVertices()
@@ -74,6 +82,12 @@ void Triangle::GenerateFillVertices()
 				AET[i].x += 1 / AET[i].m;
 		}
 	}
+	glBindVertexArray(m_VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+	glBufferData(GL_ARRAY_BUFFER, m_FilledLines.size() * sizeof(glm::vec3), m_FilledLines.data(), GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void Triangle::GenerateTriangleBorder()
@@ -82,18 +96,6 @@ void Triangle::GenerateTriangleBorder()
 
 void Triangle::Draw()
 {
-	unsigned int m_VAO;
-	unsigned int m_VBO;
-
-	glGenBuffers(1, &m_VBO);
-	glGenVertexArrays(1, &m_VAO);
 	glBindVertexArray(m_VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-	glBufferData(GL_ARRAY_BUFFER, m_FilledLines.size() * sizeof(glm::vec3), m_FilledLines.data(), GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	
 	glDrawArrays(GL_LINES, 0, static_cast<unsigned int>(m_FilledLines.size()));
-	glDeleteBuffers(1, &m_VBO);
-	glDeleteVertexArrays(1, &m_VAO);
 }

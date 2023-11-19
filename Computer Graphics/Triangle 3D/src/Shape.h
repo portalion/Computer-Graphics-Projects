@@ -5,8 +5,11 @@
 class Shape
 {
 private:
-	std::vector<Triangle> m_Triangles;
+	std::vector<Triangle*> m_Triangles;
+	void CleanUp();
 public:
+	~Shape();
+
 	static int m_Height;
 	static int m_Width;
 

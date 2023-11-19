@@ -42,9 +42,9 @@ void ControlPoint::GeneratePoints()
 void ControlPoint::DrawAll()
 {
 	if (m_VAO == 0 || m_VBO == 0) GeneratePoints();
-	glBindVertexArray(m_VAO);
 	usedShader.Bind();
 	usedShader.SetUniformMat4f("projectionMatrix", Globals::ProjectionMatrix);
+	glBindVertexArray(m_VAO); 
 	glDrawArrays(GL_POINTS, 0, static_cast<unsigned int>(m_Positions.size()));
 }
 
