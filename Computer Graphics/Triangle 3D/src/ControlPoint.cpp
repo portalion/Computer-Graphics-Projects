@@ -23,7 +23,7 @@ void ControlPoint::GeneratePoints()
 		}
 	}
 	
-	usedShader.AddShader("res/shaders/Basic.vs", ShaderType::VERTEX_SHADER);
+	usedShader.AddShader("res/shaders/PointToCircle.vs", ShaderType::VERTEX_SHADER);
 	usedShader.AddShader("res/shaders/PointToCircle.gs", ShaderType::GEOMETRY_SHADER);
 	usedShader.AddShader("res/shaders/Basic.fs", ShaderType::FRAGMENT_SHADER);
 	usedShader.CreateShader();
@@ -45,7 +45,7 @@ void ControlPoint::DrawAll()
 	glBindVertexArray(m_VAO);
 	usedShader.Bind();
 	usedShader.SetUniformMat4f("projectionMatrix", Globals::ProjectionMatrix);
-	glDrawArrays(GL_POINTS, 0, m_Positions.size());
+	glDrawArrays(GL_POINTS, 0, static_cast<unsigned int>(m_Positions.size()));
 }
 
 void ControlPoint::CleanUp()

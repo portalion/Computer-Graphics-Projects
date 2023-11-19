@@ -13,6 +13,7 @@
 #include "Shader.h"
 #include "Shape.h"
 #include "ControlPoint.h"
+#include "Triangle.h"
 
 int main(void)
 {
@@ -33,10 +34,10 @@ int main(void)
 
     Globals::Width = mode->width;
     Globals::Height = mode->height;
-    Globals::ProjectionMatrix = glm::ortho(0.f, static_cast<float>(Globals::Width), 0.f, static_cast<float>(Globals::Height), 0.f, 10.f);
-    Shape::m_Height = Globals::Height * .8f;
+    Globals::ProjectionMatrix = glm::ortho(0.f, static_cast<float>(Globals::Width), 0.f, static_cast<float>(Globals::Height), -10.f, 10.f);
+    Shape::m_Height = static_cast<int>(Globals::Height * .8f);
     Shape::m_Width = Shape::m_Height;
-    Shape::m_Position = (Globals::Height - Shape::m_Height) / 2.f;
+    Shape::m_Position = static_cast<int>((Globals::Height - Shape::m_Height) / 2.f);
 
     GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, "3D triangles", NULL, NULL);
     if (!window)
@@ -73,6 +74,15 @@ int main(void)
     basic.AddShader("res/shaders/Basic.fs", ShaderType::FRAGMENT_SHADER);
     basic.CreateShader();
 
+    glm::vec3 triangleVertices[3] =
+    {
+        { 600.f, 500.f, 0.f },
+        { 500.f, 600.f, 0.f },
+        { 700.f, 500.f, 0.f }
+    };
+
+    Triangle test(triangleVertices);
+    test.GenerateFillVertices();
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -98,6 +108,7 @@ int main(void)
         ImGui::End();
 
         ControlPoint::DrawAll();
+        test.Draw();
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

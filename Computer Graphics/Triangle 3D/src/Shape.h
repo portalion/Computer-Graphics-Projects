@@ -8,5 +8,8 @@ public:
 	static int m_Width;
 
 	static int m_Position;
+
+	int n, m;
+
 };
 

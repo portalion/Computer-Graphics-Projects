@@ -60,6 +60,9 @@
     <ClCompile Include="src\Shape.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Triangle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\vendor\glm\detail\_features.hpp">
@@ -953,6 +956,9 @@
     <ClInclude Include="src\Shape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Triangle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\vendor\glm\detail\func_common.inl">
@@ -1367,5 +1373,6 @@
     <None Include="res\shaders\Basic.vs" />
     <None Include="res\shaders\Basic.fs" />
     <None Include="res\shaders\PointToCircle.gs" />
+    <None Include="res\shaders\PointToCircle.vs" />
   </ItemGroup>
 </Project>
