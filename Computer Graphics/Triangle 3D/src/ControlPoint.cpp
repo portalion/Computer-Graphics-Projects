@@ -1,6 +1,10 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_glfw.h>
+#include <imgui/imgui_impl_opengl3.h>
+
 #include "ControlPoint.h"
 #include "Shape.h"
 #include "Shader.h"
@@ -37,6 +41,22 @@ void ControlPoint::GeneratePoints()
 	glEnableVertexAttribArray(0);
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void ControlPoint::UpdateZ()
+{
+}
+
+ControlPoint::ControlPoint(int id)
+: id{id}, z{0}
+{
+}
+
+void ControlPoint::DisplayMenu()
+{
+	ImGui::BeginChild(("Point" + std::to_string(id)).c_str(), ImVec2(250, 30));
+	ImGui::DragFloat(("z of Point" + std::to_string(id)).c_str(), &z, 1.f, -100, 100);
+	ImGui::EndChild();
 }
 
 void ControlPoint::DrawAll()

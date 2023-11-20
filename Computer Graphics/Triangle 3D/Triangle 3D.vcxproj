@@ -476,6 +476,7 @@
     <None Include="res\shaders\Background.shader" />
     <None Include="res\shaders\Basic.fs" />
     <None Include="res\shaders\Basic.vs" />
+    <None Include="res\shaders\BasicRed.fs" />
     <None Include="res\shaders\PointToCircle.fs" />
     <None Include="res\shaders\PointToCircle.gs" />
     <None Include="res\shaders\PointToCircle.vs" />

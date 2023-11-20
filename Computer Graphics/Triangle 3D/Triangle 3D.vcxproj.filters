@@ -1375,5 +1375,6 @@
     <None Include="res\shaders\PointToCircle.gs" />
     <None Include="res\shaders\PointToCircle.vs" />
     <None Include="res\shaders\PointToCircle.fs" />
+    <None Include="res\shaders\BasicRed.fs" />
   </ItemGroup>
 </Project>

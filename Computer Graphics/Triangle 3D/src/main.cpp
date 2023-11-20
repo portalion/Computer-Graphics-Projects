@@ -20,8 +20,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 bool firstMouse = true;
 float yaw = -90.0f;	// yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
 float pitch = 0.0f;
-float lastX = 800.0f / 2.0;
-float lastY = 600.0 / 2.0;
+float lastX = Globals::Width / 2.0;
+float lastY = Globals::Height / 2.0;
 float fov = 45.0f;
 
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
@@ -49,19 +49,20 @@ int main(void)
     const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
 
-    Globals::Width = mode->width;
-    Globals::Height = mode->height;
+    Globals::Width = 1000;
+    Globals::Height = mode->height/2;
     Globals::ProjectionMatrix = glm::ortho(0.f, static_cast<float>(Globals::Width), 0.f, static_cast<float>(Globals::Height), -1000.f, 1000.f);
     Shape::m_Height = static_cast<int>(Globals::Height * .8f);
     Shape::m_Width = Shape::m_Height;
     Shape::m_Position = static_cast<int>((Globals::Height - Shape::m_Height) / 2.f);
 
-    GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, "3D triangles", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(Globals::Width, Globals::Height, "3D triangles", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
         return -1;
     }
+    glfwSetWindowPos(window, 500, 650);
 
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
@@ -95,8 +96,8 @@ int main(void)
 
     Shape test;
     test.GenerateTriangles();
+    test.GenerateMesh();
 
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPosCallback(window, mouse_callback);
 
     /* Loop until the user closes the window */
@@ -110,7 +111,7 @@ int main(void)
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        const float cameraSpeed = 50.f * deltaTime; // adjust accordingly
+        const float cameraSpeed = 500.f * deltaTime; // adjust accordingly
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
             cameraPos += cameraSpeed * cameraFront;
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -130,13 +131,18 @@ int main(void)
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x, main_viewport->WorkPos.y), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x, main_viewport->WorkPos.y), ImGuiCond_FirstUseEver); 
         ImGui::Begin("Fps Display", nullptr, 
             ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration |
             ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoDocking
         );
-
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+        ImGui::End();
+
+        ImGui::SetNextWindowPos(ImVec2(Globals::Width - 300, 0), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowSize(ImVec2(300, Globals::Height), ImGuiCond_FirstUseEver);
+        ImGui::Begin("MainMenu", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+        test.DisplayMenu();
         ImGui::End();
 
         test.Draw();
@@ -158,6 +164,9 @@ int main(void)
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
+    ImGuiIO& io = ImGui::GetIO();
+    io.MousePos = ImVec2((float)xpos, (float)ypos);
+
     if (firstMouse)
     {
         lastX = xpos;
