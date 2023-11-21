@@ -12,7 +12,6 @@ private:
 	std::vector<glm::vec3> m_MeshVertices;
 	std::vector<unsigned int> m_MeshIndices;
 
-	std::vector<ControlPoint> m_ControlPoints;
 
 	Shader shader;
 	Shader meshShader;
@@ -21,6 +20,9 @@ private:
 	unsigned int m_VBO;
 	unsigned int m_IBO;
 
+	bool changing = false;
+
+	void UpdateMesh();
 	void CleanUp();
 public:
 	Shape();
@@ -30,6 +32,7 @@ public:
 	static int m_Width;
 
 	static int m_Position;
+	static std::vector<ControlPoint> m_ControlPoints;
 
 	int n = 7, m = 6;
 

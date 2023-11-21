@@ -45,18 +45,53 @@ void ControlPoint::GeneratePoints()
 
 void ControlPoint::UpdateZ()
 {
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+	glBufferSubData(GL_ARRAY_BUFFER,3 * sizeof(float) * id + 2 * sizeof(float), sizeof(z), &z);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 ControlPoint::ControlPoint(int id)
 : id{id}, z{0}
 {
+	if (m_VAO == 0 || m_VBO == 0) GeneratePoints();
 }
 
-void ControlPoint::DisplayMenu()
+bool ControlPoint::DisplayMenu()
 {
+	bool changed = false;
 	ImGui::BeginChild(("Point" + std::to_string(id)).c_str(), ImVec2(250, 30));
-	ImGui::DragFloat(("z of Point" + std::to_string(id)).c_str(), &z, 1.f, -100, 100);
+	changed = ImGui::DragFloat(("z of Point" + std::to_string(id)).c_str(), &z, 1.f, -1000, 1000);
 	ImGui::EndChild();
+
+	if (changed)UpdateZ();
+
+	return changed;
+}
+
+int binomialCoefficients(int n, int k) {
+	if (k == 0 || k == n)
+		return 1;
+	return binomialCoefficients(n - 1, k - 1) + binomialCoefficients(n - 1, k);
+}
+
+float ControlPoint::GetZOfPoint(float x, float y)
+{
+	x -= Shape::m_Position;
+	y -= Shape::m_Position;
+	x /= Shape::m_Width;
+	y /= Shape::m_Height;
+	float result = 0;
+	for (int i = 0; i < controlPointsPerSide; i++)
+	{
+		for (int j = 0; j < controlPointsPerSide; j++)
+		{
+			float Bx = binomialCoefficients(3, i) * pow(x, i) * pow(1 - x, 3 - i);
+			float By = binomialCoefficients(3, j) * pow(y, j) * pow(1 - y, 3 - j);
+			result += Shape::m_ControlPoints[i * controlPointsPerSide + j].z / Shape::m_Width * Bx * By;
+		}
+	}
+	return result * Shape::m_Width;
 }
 
 void ControlPoint::DrawAll()

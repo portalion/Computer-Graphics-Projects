@@ -6,6 +6,21 @@
 int Shape::m_Height = static_cast<int>(Globals::Height * .8f);
 int Shape::m_Width = m_Height;
 int Shape::m_Position = 0;
+std::vector<ControlPoint> Shape::m_ControlPoints;
+
+void Shape::UpdateMesh()
+{
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+
+	for (int i = 0; i < m_MeshVertices.size(); i++)
+	{
+		float tmp = ControlPoint::GetZOfPoint(m_MeshVertices[i].x, m_MeshVertices[i].y);
+		glBufferSubData(GL_ARRAY_BUFFER, sizeof(float) * 3 * i + 2 * sizeof(float), sizeof(float), &tmp);
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
 
 void Shape::CleanUp()
 {
@@ -78,8 +93,21 @@ void Shape::GenerateMesh()
 
 void Shape::DisplayMenu()
 {
+	bool tmp = changing;
+	changing = false;
 	for (int i = 0; i < m_ControlPoints.size(); i++)
-		m_ControlPoints[i].DisplayMenu();
+	{
+		if(m_ControlPoints[i].DisplayMenu())
+		{
+			changing = true;
+			break;
+		}
+	}
+	if (changing == false && tmp == true)
+	{
+		UpdateMesh();
+		GenerateTriangles();
+	}
 }
 
 void Shape::GenerateTriangles()
@@ -91,16 +119,34 @@ void Shape::GenerateTriangles()
 		{
 			glm::vec3 triangleVertices[3] =
 			{
-				{ m_Position + i * m_Width / n, m_Position + j * m_Height / m, 0.f },
-				{ m_Position + (i + 1) * m_Width / n, m_Position + j * m_Height / m, 0.f },
-				{ m_Position + i * m_Width / n, std::ceil(m_Position + (j + 1) * m_Height / m) + 1.f, 0.f }
+				{ 
+					m_Position + i * m_Width / n, m_Position + j * m_Height / m, 
+					ControlPoint::GetZOfPoint(m_Position + i * m_Width / n, m_Position + j * m_Height / m)
+				},
+				{ 
+					m_Position + (i + 1) * m_Width / n, m_Position + j * m_Height / m, 
+					ControlPoint::GetZOfPoint(m_Position + (i + 1) * m_Width / n, m_Position + j * m_Height / m)
+				},
+				{ 
+					m_Position + i * m_Width / n, std::ceil(m_Position + (j + 1) * m_Height / m) + 1.f, 
+					ControlPoint::GetZOfPoint(m_Position + i * m_Width / n, std::ceil(m_Position + (j + 1) * m_Height / m) + 1.f)
+				}
 			};
 			m_Triangles.push_back(new Triangle(triangleVertices));
 			glm::vec3 triangleVertices2[3] =
 			{
-				{ m_Position + i * m_Width / n, std::ceil(m_Position + (j + 1) * m_Height / m) + 1.f, 0.f },
-				{ m_Position + (i + 1) * m_Width / n, std::ceil(m_Position + (j + 1) * m_Height / m) + 1.f, 0.f },
-				{ m_Position + (i + 1) * m_Width / n, m_Position + j * m_Height / m, 0.f }
+				{ 
+					m_Position + i * m_Width / n, std::ceil(m_Position + (j + 1) * m_Height / m) + 1.f, 
+					ControlPoint::GetZOfPoint(m_Position + i * m_Width / n, std::ceil(m_Position + (j + 1) * m_Height / m) + 1.f)
+				},
+				{ 
+					m_Position + (i + 1) * m_Width / n, std::ceil(m_Position + (j + 1) * m_Height / m) + 1.f, 
+					ControlPoint::GetZOfPoint(m_Position + (i + 1) * m_Width / n, std::ceil(m_Position + (j + 1) * m_Height / m) + 1.f)
+				},
+				{ 
+					m_Position + (i + 1) * m_Width / n, m_Position + j * m_Height / m, 
+					ControlPoint::GetZOfPoint(m_Position + (i + 1) * m_Width / n, m_Position + j * m_Height / m)
+				}
 			};
 			m_Triangles.push_back(new Triangle(triangleVertices2));
 		}

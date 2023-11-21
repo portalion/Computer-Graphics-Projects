@@ -16,6 +16,5 @@ public:
 	~Triangle();
 
 	void GenerateFillVertices();
-	void GenerateTriangleBorder();
 	void Draw();
 };

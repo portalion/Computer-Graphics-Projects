@@ -13,6 +13,11 @@ Triangle::~Triangle()
 	glDeleteVertexArrays(1, &m_VAO);
 }
 
+float GetSlopeZ(glm::vec3 p1, glm::vec3 p2)
+{
+	return (p2.y - p1.y) / (p2.z - p1.z);
+}
+
 float GetSlope(glm::vec3 p1, glm::vec3 p2)
 {
 	return (p2.y - p1.y) / (p2.x - p1.x);
@@ -33,6 +38,8 @@ void Triangle::GenerateFillVertices()
 		float ymax;
 		float x;
 		float m;
+		float z;
+		float mz;
 
 		bool operator==(AETPointer p)
 		{
@@ -59,12 +66,14 @@ void Triangle::GenerateFillVertices()
 				int next = ind[(i + 1) % 3];
 
 				if (m_Points[prev].y >= m_Points[ind[i]].y)
-					AET.push_back(AETPointer{ m_Points[prev].y, m_Points[ind[i]].x, GetSlope(m_Points[prev], m_Points[ind[i]])});
-				else AET.erase(std::remove(AET.begin(), AET.end(), AETPointer{ m_Points[prev].y, m_Points[prev].x, 0.f }), AET.end());
+					AET.push_back(AETPointer{ m_Points[prev].y, m_Points[ind[i]].x, GetSlope(m_Points[prev], m_Points[ind[i]]),
+						m_Points[ind[i]].z, GetSlopeZ(m_Points[prev], m_Points[ind[i]]) });
+				else AET.erase(std::remove(AET.begin(), AET.end(), AETPointer{ m_Points[prev].y, m_Points[prev].x, 0.f, 0.f, 0.f }), AET.end());
 
 				if (m_Points[next].y >= m_Points[ind[i]].y)
-					AET.push_back(AETPointer{ m_Points[next].y, m_Points[ind[i]].x, GetSlope(m_Points[ind[i]], m_Points[next]) });
-				else AET.erase(std::remove(AET.begin(), AET.end(), AETPointer{ m_Points[next].y, m_Points[next].x, 0.f }), AET.end());
+					AET.push_back(AETPointer{ m_Points[next].y, m_Points[ind[i]].x, GetSlope(m_Points[ind[i]], m_Points[next]),
+						m_Points[ind[i]].z, GetSlopeZ(m_Points[ind[i]], m_Points[next]) });
+				else AET.erase(std::remove(AET.begin(), AET.end(), AETPointer{ m_Points[next].y, m_Points[next].x, 0.f, 0.f, 0.f }), AET.end());
 			}
 		}
 		
@@ -73,13 +82,15 @@ void Triangle::GenerateFillVertices()
 
 		for (int i = 0; i < AET.size(); i += 2)
 		{
-			m_FilledLines.push_back({ AET[i].x, y, 0.f });
-			m_FilledLines.push_back({ AET[i + 1].x, y, 0.f });
+			m_FilledLines.push_back({ AET[i].x, y, AET[i].z});
+			m_FilledLines.push_back({ AET[i + 1].x, y, AET[i + 1].z });
 		}
 		for (int i = 0; i < AET.size(); i++)
 		{
 			if(AET[i].m != 0)
 				AET[i].x += 1 / AET[i].m;
+			if (AET[i].mz != 0)
+				AET[i].z += 1 / AET[i].mz;
 		}
 	}
 	glBindVertexArray(m_VAO);
@@ -88,10 +99,6 @@ void Triangle::GenerateFillVertices()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
-void Triangle::GenerateTriangleBorder()
-{
 }
 
 void Triangle::Draw()

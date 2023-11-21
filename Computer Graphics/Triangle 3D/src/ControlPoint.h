@@ -22,7 +22,9 @@ private:
 	void UpdateZ();
 public:
 	ControlPoint(int id);
-	void DisplayMenu();
+	bool DisplayMenu();
+
+	static float GetZOfPoint(float x, float y);
 
 	static void DrawAll();
 	static void CleanUp();
