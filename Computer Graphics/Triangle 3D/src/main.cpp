@@ -14,6 +14,7 @@
 #include "Shape.h"
 #include "ControlPoint.h"
 #include "Triangle.h"
+#include "LightSource.h"
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
@@ -37,8 +38,7 @@ int main(void)
     GLFWmonitor* monitor = monitors[monitorsCount - 1];
     const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
-
-    Globals::Width = 1000;
+    Globals::Width = 1300;
     Globals::Height = mode->height/2;
     Globals::ProjectionMatrix = glm::ortho(0.f, static_cast<float>(Globals::Width), 0.f, static_cast<float>(Globals::Height), -5000.f, 5000.f);
     Shape::m_Height = static_cast<int>(Globals::Height * .8f);
@@ -84,6 +84,8 @@ int main(void)
         { 500.f, 600.f, 0.f },
         { 700.f, 500.f, 0.f }
     };
+
+    LightSource lightSource({ 500.f, 0.f, 500.f });
 
     Shape test;
     test.GenerateTriangles();
@@ -133,6 +135,8 @@ int main(void)
         ImGui::Begin("MainMenu", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
         test.DisplayMenu();
         ImGui::End();
+
+        lightSource.Draw();
 
         test.Draw();
         ControlPoint::DrawAll();
