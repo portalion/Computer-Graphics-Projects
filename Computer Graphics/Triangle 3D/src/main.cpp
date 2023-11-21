@@ -15,18 +15,7 @@
 #include "ControlPoint.h"
 #include "Triangle.h"
 
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-
-bool firstMouse = true;
-float yaw = -90.0f;	// yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
-float pitch = 0.0f;
-float lastX = Globals::Width / 2.0;
-float lastY = Globals::Height / 2.0;
-float fov = 45.0f;
-
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 float deltaTime = 0.0f;	// Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
@@ -87,6 +76,8 @@ int main(void)
     
     const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
 
+    Globals::ViewMatrix = glm::mat4(1.f);
+
     glm::vec3 triangleVertices[3] =
     {
         { 600.f, 500.f, 0.f },
@@ -98,7 +89,7 @@ int main(void)
     test.GenerateTriangles();
     test.GenerateMesh();
 
-    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetScrollCallback(window, scroll_callback);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -113,15 +104,13 @@ int main(void)
 
         const float cameraSpeed = 500.f * deltaTime; // adjust accordingly
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            cameraPos += cameraSpeed * cameraFront;
+            Globals::ViewMatrix = glm::translate(Globals::ViewMatrix, glm::vec3(0.f, cameraSpeed, 0.f));
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-            cameraPos -= cameraSpeed * cameraFront;
+            Globals::ViewMatrix = glm::translate(Globals::ViewMatrix, glm::vec3(0.f, -cameraSpeed, 0.f));
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+            Globals::ViewMatrix = glm::translate(Globals::ViewMatrix, glm::vec3(-cameraSpeed, 0.f, 0.f));
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-
-        Globals::ViewMatrix = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+            Globals::ViewMatrix = glm::translate(Globals::ViewMatrix, glm::vec3(cameraSpeed, 0.f, 0.f));
 
         /* Render here */
         GLCall(glClearColor(0.1f, 0.2f, 0.2f, 1.0f));
@@ -162,39 +151,17 @@ int main(void)
     return 0;
 }
 
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    ImGuiIO& io = ImGui::GetIO();
-    io.MousePos = ImVec2((float)xpos, (float)ypos);
+    ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
 
-    if (firstMouse)
-    {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
-
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos;
-    lastX = xpos;
-    lastY = ypos;
-
-    float sensitivity = 0.1f;
-    xoffset *= sensitivity;
-    yoffset *= sensitivity;
-
-    yaw += xoffset;
-    pitch += yoffset;
-
-    if (pitch > 89.0f)
-        pitch = 89.0f;
-    if (pitch < -89.0f)
-        pitch = -89.0f;
-
-    glm::vec3 direction;
-    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    direction.y = sin(glm::radians(pitch));
-    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    cameraFront = glm::normalize(direction);
+    auto tmp = glm::translate(Globals::ViewMatrix, glm::vec3(Shape::m_Position + Shape::m_Width / 2,
+        Shape::m_Position + Shape::m_Height / 2, 0.f));
+    if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS 
+        || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS)
+        tmp = glm::rotate(tmp, static_cast<float>(yoffset) / 10.f, glm::vec3(0.f, 1.f, 0.f));
+    else
+        tmp = glm::rotate(tmp, static_cast<float>(yoffset) / 10.f, glm::vec3(1.f, 0.f, 0.f));
+    Globals::ViewMatrix = glm::translate(tmp, glm::vec3(-Shape::m_Position - Shape::m_Width / 2, 
+        -Shape::m_Position - Shape::m_Height / 2, 0.f));
 }
-
