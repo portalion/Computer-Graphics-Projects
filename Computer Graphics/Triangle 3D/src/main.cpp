@@ -51,7 +51,7 @@ int main(void)
 
     Globals::Width = 1000;
     Globals::Height = mode->height/2;
-    Globals::ProjectionMatrix = glm::ortho(0.f, static_cast<float>(Globals::Width), 0.f, static_cast<float>(Globals::Height), -1000.f, 1000.f);
+    Globals::ProjectionMatrix = glm::ortho(0.f, static_cast<float>(Globals::Width), 0.f, static_cast<float>(Globals::Height), -5000.f, 5000.f);
     Shape::m_Height = static_cast<int>(Globals::Height * .8f);
     Shape::m_Width = Shape::m_Height;
     Shape::m_Position = static_cast<int>((Globals::Height - Shape::m_Height) / 2.f);

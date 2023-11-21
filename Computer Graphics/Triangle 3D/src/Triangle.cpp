@@ -33,6 +33,8 @@ Triangle::Triangle(glm::vec3 vertices[3])
 
 void Triangle::GenerateFillVertices()
 {
+	const float YCHANGE = 0.25f;
+
 	struct AETPointer
 	{
 		float ymax;
@@ -56,7 +58,7 @@ void Triangle::GenerateFillVertices()
 
 	std::vector<AETPointer> AET;
 
-	for (int y = ymin; y <= ymax; y++)
+	for (float y = ymin; y <= ymax; y+=YCHANGE)
 	{
 		for (int i = 0; i < 3; i++)
 		{
@@ -88,9 +90,9 @@ void Triangle::GenerateFillVertices()
 		for (int i = 0; i < AET.size(); i++)
 		{
 			if(AET[i].m != 0)
-				AET[i].x += 1 / AET[i].m;
+				AET[i].x += YCHANGE / AET[i].m;
 			if (AET[i].mz != 0)
-				AET[i].z += 1 / AET[i].mz;
+				AET[i].z += YCHANGE / AET[i].mz;
 		}
 	}
 	glBindVertexArray(m_VAO);
