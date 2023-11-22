@@ -63,17 +63,14 @@ LightSource::LightSource(glm::vec3 position)
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    {
-        {
-            modelMatrix = glm::scale(glm::translate(glm::mat4(1.f), position), { 100.f, 100.f, 100.f });
-        }
-    }
+    modelMatrix = glm::scale(glm::translate(glm::mat4(1.f), position), { 100.f, 100.f, 100.f });
 
     shader.AddShader("res/Shaders/LightSource.vs", ShaderType::VERTEX_SHADER);
     shader.AddShader("res/Shaders/LightSource.fs", ShaderType::FRAGMENT_SHADER);
     shader.CreateShader();
     shader.Bind();
     shader.SetUniformMat4f("projectionMatrix", Globals::ProjectionMatrix);
+    this->position = position;
 }
 
 LightSource::~LightSource()

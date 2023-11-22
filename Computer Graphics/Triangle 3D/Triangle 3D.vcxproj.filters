@@ -1384,5 +1384,6 @@
     <None Include="res\shaders\BasicRed.fs" />
     <None Include="res\shaders\LightSource.vs" />
     <None Include="res\shaders\LightSource.fs" />
+    <None Include="res\shaders\BasicRed.vs" />
   </ItemGroup>
 </Project>

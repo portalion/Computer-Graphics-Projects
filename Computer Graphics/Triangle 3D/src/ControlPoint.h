@@ -25,6 +25,8 @@ public:
 	bool DisplayMenu();
 
 	static float GetZOfPoint(float x, float y);
+	static glm::vec3 GetPu(float x, float y);
+	static glm::vec3 GetPv(float x, float y);
 
 	static void DrawAll();
 	static void CleanUp();

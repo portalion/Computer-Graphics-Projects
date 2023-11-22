@@ -40,5 +40,6 @@ public:
 	void GenerateTriangles();
 	void GenerateMesh();
 	void Draw();
+	void DrawMesh();
 };
 

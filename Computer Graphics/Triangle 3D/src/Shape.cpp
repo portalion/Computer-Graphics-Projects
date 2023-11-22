@@ -2,6 +2,7 @@
 #include <glm/glm.hpp>
 #include "Shader.h"
 #include "ControlPoint.h"
+#include "LightSource.h"
 
 int Shape::m_Height = static_cast<int>(Globals::Height * .8f);
 int Shape::m_Width = m_Height;
@@ -40,8 +41,9 @@ Shape::Shape()
 	shader.CreateShader();
 	shader.Bind();
 	shader.SetUniformMat4f("projectionMatrix", Globals::ProjectionMatrix);
+	shader.SetUniformVec3f("lightningSourcePosition", Globals::lightSource->position);
 
-	meshShader.AddShader("res/shaders/Basic.vs", ShaderType::VERTEX_SHADER);
+	meshShader.AddShader("res/shaders/BasicRed.vs", ShaderType::VERTEX_SHADER);
 	meshShader.AddShader("res/shaders/BasicRed.fs", ShaderType::FRAGMENT_SHADER);
 	meshShader.CreateShader();
 	meshShader.Bind();
@@ -65,7 +67,7 @@ void Shape::GenerateMesh()
 
 	for (int i = 0; i < n + 1; i++)
 		for (int j = 0; j < m + 1; j++)
-			m_MeshVertices.push_back({ m_Position + m_Width / n * i, m_Position + m_Height / m * j, 0.f });
+			m_MeshVertices.push_back({ m_Position + m_Width / static_cast<float>(n) * i, m_Position + m_Height / static_cast<float>(m) * j, 0.f });
 
 	m_MeshIndices.clear();
 
@@ -110,6 +112,16 @@ void Shape::DisplayMenu()
 	}
 }
 
+void Shape::DrawMesh()
+{
+	meshShader.Bind();
+	meshShader.SetUniformMat4f("viewMatrix", Globals::ViewMatrix);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	GLCall(glBindVertexArray(m_VAO));
+	GLCall(glDrawElements(GL_TRIANGLES, m_MeshIndices.size(), GL_UNSIGNED_INT, 0));
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+}
+
 void Shape::GenerateTriangles()
 {
 	CleanUp();
@@ -135,17 +147,17 @@ void Shape::GenerateTriangles()
 			m_Triangles.push_back(new Triangle(triangleVertices));
 			glm::vec3 triangleVertices2[3] =
 			{
-				{ 
-					m_Position + i * m_Width / n, std::ceil(m_Position + (j + 1) * m_Height / m) + 1.f, 
+				{
+					m_Position + i * m_Width / n, std::ceil(m_Position + (j + 1) * m_Height / m) + 1.f,
 					ControlPoint::GetZOfPoint(m_Position + i * m_Width / n, std::ceil(m_Position + (j + 1) * m_Height / m) + 1.f)
+				},
+				{
+					m_Position + (i + 1) * m_Width / n, m_Position + j * m_Height / m,
+					ControlPoint::GetZOfPoint(m_Position + (i + 1) * m_Width / n, m_Position + j * m_Height / m)
 				},
 				{ 
 					m_Position + (i + 1) * m_Width / n, std::ceil(m_Position + (j + 1) * m_Height / m) + 1.f, 
 					ControlPoint::GetZOfPoint(m_Position + (i + 1) * m_Width / n, std::ceil(m_Position + (j + 1) * m_Height / m) + 1.f)
-				},
-				{ 
-					m_Position + (i + 1) * m_Width / n, m_Position + j * m_Height / m, 
-					ControlPoint::GetZOfPoint(m_Position + (i + 1) * m_Width / n, m_Position + j * m_Height / m)
 				}
 			};
 			m_Triangles.push_back(new Triangle(triangleVertices2));
@@ -153,6 +165,7 @@ void Shape::GenerateTriangles()
 	}
 	for (auto& triangle : m_Triangles)
 		triangle->GenerateFillVertices();
+
 }
 
 void Shape::Draw()
@@ -161,12 +174,6 @@ void Shape::Draw()
 	shader.SetUniformMat4f("viewMatrix", Globals::ViewMatrix);
 
 	for (auto& triangle : m_Triangles)
-		triangle->Draw();
+		triangle->Draw(&shader);
 
-	meshShader.Bind();
-	meshShader.SetUniformMat4f("viewMatrix", Globals::ViewMatrix);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	GLCall(glBindVertexArray(m_VAO));
-	GLCall(glDrawElements(GL_TRIANGLES, m_MeshIndices.size(), GL_UNSIGNED_INT, 0));
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }

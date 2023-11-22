@@ -85,12 +85,14 @@ int main(void)
         { 700.f, 500.f, 0.f }
     };
 
-    LightSource lightSource({ 500.f, 0.f, 500.f });
+    Globals::lightSource = new LightSource({Shape::m_Position + Shape::m_Width / 2, Shape::m_Position + Shape::m_Height / 2, 500.f});
 
-    Shape test;
+    bool drawMesh = false;
+
+    Shape test; 
     test.GenerateTriangles();
     test.GenerateMesh();
-
+    
     glfwSetScrollCallback(window, scroll_callback);
 
     /* Loop until the user closes the window */
@@ -133,12 +135,24 @@ int main(void)
         ImGui::SetNextWindowPos(ImVec2(Globals::Width - 300, 0), ImGuiCond_FirstUseEver);
         ImGui::SetNextWindowSize(ImVec2(300, Globals::Height), ImGuiCond_FirstUseEver);
         ImGui::Begin("MainMenu", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+        if (ImGui::SliderInt("s", &(test.n), 1, 100))
+        {
+            test.GenerateTriangles();
+            test.GenerateMesh();
+        }
+        if(ImGui::SliderInt("t", &(test.m), 1, 100))
+        {
+            test.GenerateTriangles();
+            test.GenerateMesh();
+        }
+        ImGui::Checkbox("Draw Mesh", &drawMesh);
         test.DisplayMenu();
         ImGui::End();
 
-        lightSource.Draw();
+        Globals::lightSource->Draw();
 
         test.Draw();
+        if (drawMesh)test.DrawMesh();
         ControlPoint::DrawAll();
 
         ImGui::Render();
@@ -149,7 +163,8 @@ int main(void)
         /* Poll for and process events */
         GLCall(glfwPollEvents());
     }
-
+    delete Globals::lightSource;
+    Globals::lightSource = nullptr;
     ControlPoint::CleanUp();
     glfwTerminate();
     return 0;
@@ -164,8 +179,10 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
     if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS 
         || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS)
         tmp = glm::rotate(tmp, static_cast<float>(yoffset) / 10.f, glm::vec3(0.f, 1.f, 0.f));
-    else
+    else if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+        tmp = glm::rotate(tmp, static_cast<float>(yoffset) / 10.f, glm::vec3(0.f, 0.f, 1.f));
+    else 
         tmp = glm::rotate(tmp, static_cast<float>(yoffset) / 10.f, glm::vec3(1.f, 0.f, 0.f));
-    Globals::ViewMatrix = glm::translate(tmp, glm::vec3(-Shape::m_Position - Shape::m_Width / 2, 
+    Globals::ViewMatrix = glm::translate(tmp, glm::vec3(-Shape::m_Position - Shape::m_Width / 2,
         -Shape::m_Position - Shape::m_Height / 2, 0.f));
 }

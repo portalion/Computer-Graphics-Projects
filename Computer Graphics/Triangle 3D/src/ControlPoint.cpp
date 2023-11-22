@@ -94,6 +94,46 @@ float ControlPoint::GetZOfPoint(float x, float y)
 	return result * Shape::m_Width;
 }
 
+glm::vec3 ControlPoint::GetPu(float x, float y)
+{
+	x -= Shape::m_Position;
+	y -= Shape::m_Position;
+	x /= Shape::m_Width;
+	y /= Shape::m_Height;
+	glm::vec3 result = glm::vec3(0);
+	for (int i = 0; i < controlPointsPerSide - 1; i++)
+	{
+		for (int j = 0; j < controlPointsPerSide; j++)
+		{
+			float Bx = binomialCoefficients(2, i) * pow(x, i) * pow(1 - x, 2 - i);
+			float By = binomialCoefficients(3, j) * pow(y, j) * pow(1 - y, 3 - j);
+			result += (glm::normalize(m_Positions[(i + 1) * controlPointsPerSide + j]) - 
+				glm::normalize(m_Positions[i * controlPointsPerSide + j])) * Bx * By;
+		}
+	}
+	return static_cast<float>(controlPointsPerSide) * result;
+}
+
+glm::vec3 ControlPoint::GetPv(float x, float y)
+{
+	x -= Shape::m_Position;
+	y -= Shape::m_Position;
+	x /= Shape::m_Width;
+	y /= Shape::m_Height;
+	glm::vec3 result = glm::vec3(0);
+	for (int i = 0; i < controlPointsPerSide; i++)
+	{
+		for (int j = 0; j < controlPointsPerSide - 1; j++)
+		{
+			float Bx = binomialCoefficients(3, i) * pow(x, i) * pow(1 - x, 3 - i);
+			float By = binomialCoefficients(2, j) * pow(y, j) * pow(1 - y, 2 - j);
+			result += (glm::normalize(m_Positions[i * controlPointsPerSide + j + 1]) -
+				glm::normalize(m_Positions[i * controlPointsPerSide + j])) * Bx * By;
+		}
+	}
+	return static_cast<float>(controlPointsPerSide) * result;
+}
+
 void ControlPoint::DrawAll()
 {
 	if (m_VAO == 0 || m_VBO == 0) GeneratePoints();

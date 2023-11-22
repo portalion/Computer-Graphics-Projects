@@ -11,10 +11,13 @@ void GLClearError();
 
 bool GLLogCall(const char* function, const char* file, int line);
 
+class LightSource;
+
 namespace Globals
 {
     extern int Height;
     extern int Width;
     extern glm::mat4 ProjectionMatrix;
     extern glm::mat4 ViewMatrix;
+    extern LightSource* lightSource;
 }

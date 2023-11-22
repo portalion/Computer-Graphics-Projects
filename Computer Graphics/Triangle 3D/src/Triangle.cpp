@@ -6,6 +6,7 @@
 
 #include "Shader.h"
 #include "Utils.h"
+#include "ControlPoint.h"
 
 Triangle::~Triangle()
 {
@@ -101,10 +102,17 @@ void Triangle::GenerateFillVertices()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	for (int i = 0; i < 3; i++)
+		m_Normals[i] = glm::cross(ControlPoint::GetPu(m_Points[i].x, m_Points[i].y), ControlPoint::GetPv(m_Points[i].x, m_Points[i].y));
 }
 
-void Triangle::Draw()
+void Triangle::Draw(Shader* shader)
 {
+	glm::vec3 edge1 = m_Points[1] - m_Points[0];
+	glm::vec3 edge2 = m_Points[2] - m_Points[0];
+	glm::vec3 normal = glm::cross(edge1, edge2);
+	shader->SetUniformVec3f("normal", glm::normalize(normal));
 	glBindVertexArray(m_VAO);
 	glDrawArrays(GL_LINES, 0, static_cast<unsigned int>(m_FilledLines.size()));
 }

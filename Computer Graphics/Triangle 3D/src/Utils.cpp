@@ -1,5 +1,6 @@
 #include "Utils.h"
 #include <iostream>
+#include "LightSource.h"
 
 void GLClearError()
 {
@@ -23,4 +24,5 @@ namespace Globals
     int Width = 0;
     glm::mat4 ProjectionMatrix;
     glm::mat4 ViewMatrix;
+    LightSource* lightSource = nullptr;
 }

@@ -2,6 +2,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 
+class Shader;
 class Triangle
 {
 private:
@@ -9,6 +10,7 @@ private:
 	unsigned int m_VBO;
 
 	glm::vec3 m_Points[3];
+	glm::vec3 m_Normals[3];
 
 	std::vector<glm::vec3> m_FilledLines;
 public:
@@ -16,5 +18,5 @@ public:
 	~Triangle();
 
 	void GenerateFillVertices();
-	void Draw();
+	void Draw(Shader* shader);
 };
