@@ -102,7 +102,6 @@ void Shape::DisplayMenu()
 		if(m_ControlPoints[i].DisplayMenu())
 		{
 			changing = true;
-			break;
 		}
 	}
 	if (changing == false && tmp == true)

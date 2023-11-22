@@ -3,9 +3,9 @@
 in vec3 FragPos;
 out vec4 FragColor;
 
-uniform float m = 1;
-uniform float kd = 1;
-uniform float ks = 0;
+uniform float m = 100;
+uniform float kd = 0.8;
+uniform float ks = 0.2;
 
 uniform vec3 lightningSourcePosition;
 
@@ -15,5 +15,7 @@ uniform vec3 normal;
 
 void main() {
     vec3 lightningSourceVector = normalize(lightningSourcePosition - FragPos);
-    FragColor = vec4(kd * lightColor * objectColor * dot(lightningSourceVector, normalize(normal)), 1.0);
+    vec3 r = 2 * dot(normal, lightningSourceVector) * normal - lightningSourceVector;
+    FragColor = vec4(kd * lightColor * objectColor * dot(lightningSourceVector, normalize(normal)) +
+        ks * lightColor * objectColor * pow(dot(vec3(0., 0., 1.), r), m), 1.0);
 }
