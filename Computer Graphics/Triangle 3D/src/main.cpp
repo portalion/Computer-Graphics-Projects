@@ -146,6 +146,12 @@ int main(void)
             test.GenerateMesh();
         }
         ImGui::Checkbox("Draw Mesh", &drawMesh);
+        if (ImGui::Button("Reset Position"))
+            Globals::ViewMatrix = glm::mat4(1.f);
+        ImGui::End();
+        ImGui::SetNextWindowPos(ImVec2(Globals::Width - 600, 0), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowSize(ImVec2(300, Globals::Height), ImGuiCond_FirstUseEver);
+        ImGui::Begin("PointsMenu", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
         test.DisplayMenu();
         ImGui::End();
 
