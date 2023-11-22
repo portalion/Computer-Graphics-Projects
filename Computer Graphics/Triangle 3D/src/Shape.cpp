@@ -171,6 +171,11 @@ void Shape::Draw()
 {
 	shader.Bind();
 	shader.SetUniformMat4f("viewMatrix", Globals::ViewMatrix);
+	shader.SetUniform1f("kd", Globals::kd);
+	shader.SetUniform1f("ks", Globals::ks);
+	shader.SetUniformVec3f("objectColor", Globals::objectColor);
+	shader.SetUniformVec3f("lightColor", Globals::lightColor);
+	shader.SetUniform1f("m", Globals::m);
 
 	for (auto& triangle : m_Triangles)
 		triangle->Draw(&shader);

@@ -146,6 +146,11 @@ int main(void)
             test.GenerateMesh();
         }
         ImGui::Checkbox("Draw Mesh", &drawMesh);
+        ImGui::SliderInt("m", &Globals::m, 1, 100);
+        ImGui::SliderFloat("kd", &Globals::kd, 0, 1);
+        ImGui::SliderFloat("ks", &Globals::ks, 0, 1);
+        ImGui::ColorPicker3("Object Color", &Globals::objectColor.x);
+        ImGui::ColorPicker3("Light Color", &Globals::lightColor.x);
         if (ImGui::Button("Reset Position"))
             Globals::ViewMatrix = glm::mat4(1.f);
         ImGui::End();

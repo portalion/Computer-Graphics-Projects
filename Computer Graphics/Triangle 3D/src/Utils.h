@@ -20,4 +20,10 @@ namespace Globals
     extern glm::mat4 ProjectionMatrix;
     extern glm::mat4 ViewMatrix;
     extern LightSource* lightSource;
+
+    extern int m;
+    extern float kd;
+    extern float ks;
+    extern glm::vec3 objectColor;
+    extern glm::vec3 lightColor;
 }

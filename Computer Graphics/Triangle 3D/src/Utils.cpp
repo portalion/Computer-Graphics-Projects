@@ -25,4 +25,10 @@ namespace Globals
     glm::mat4 ProjectionMatrix;
     glm::mat4 ViewMatrix;
     LightSource* lightSource = nullptr;
+
+    int m = 1;
+    float kd = 1;
+    float ks = 0;
+    glm::vec3 objectColor = glm::vec3(0.f, 0.f, 1.f);
+    glm::vec3 lightColor = glm::vec3(1.f, 1.f, 1.f);
 }
