@@ -75,9 +75,9 @@ void Shape::GenerateMesh()
 	{
 		for (int j = 0; j < m; j++)
 		{
+			m_MeshIndices.push_back(i * (m + 1) + j + m + 1);
 			m_MeshIndices.push_back(i * (m + 1) + j);
 			m_MeshIndices.push_back(i * (m + 1) + j + 1);
-			m_MeshIndices.push_back(i * (m + 1) + j + m + 1);
 			m_MeshIndices.push_back(i * (m + 1) + j + 1);
 			m_MeshIndices.push_back(i * (m + 1) + j + m + 1);
 			m_MeshIndices.push_back(i * (m + 1) + j + m + 2);

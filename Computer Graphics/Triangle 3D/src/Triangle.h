@@ -3,6 +3,13 @@
 #include <vector>
 
 class Shader;
+
+struct Vertex
+{
+	glm::vec3 position;
+	glm::vec3 normal;
+};
+
 class Triangle
 {
 private:
@@ -12,7 +19,7 @@ private:
 	glm::vec3 m_Points[3];
 	glm::vec3 m_Normals[3];
 
-	std::vector<glm::vec3> m_FilledLines;
+	std::vector<Vertex> m_FilledLines;
 public:
 	Triangle(glm::vec3 vertices[3]);
 	~Triangle();

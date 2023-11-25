@@ -1385,5 +1385,6 @@
     <None Include="res\shaders\LightSource.vs" />
     <None Include="res\shaders\LightSource.fs" />
     <None Include="res\shaders\BasicRed.vs" />
+    <None Include="res\shaders\BasicShowNormals.gs" />
   </ItemGroup>
 </Project>
