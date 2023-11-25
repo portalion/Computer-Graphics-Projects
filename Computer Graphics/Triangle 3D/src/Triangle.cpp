@@ -104,15 +104,44 @@ void Triangle::GenerateFillVertices()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	for (int i = 0; i < 3; i++)
-		m_Normals[i] = glm::cross(ControlPoint::GetPu(m_Points[i].x, m_Points[i].y), ControlPoint::GetPv(m_Points[i].x, m_Points[i].y));
+	{
+		auto first = ControlPoint::GetPu(m_Points[i].x, m_Points[i].y);
+		auto second = ControlPoint::GetPv(m_Points[i].x, m_Points[i].y);
+		m_Normals[i] = glm::normalize(glm::cross(first, second));
+	}
+}
+
+glm::vec3 calculateBarycentricCoordinates(const glm::vec3& P, const glm::vec3& V0, const glm::vec3& V1, const glm::vec3& V2) {
+	glm::vec3 edge1 = V1 - V0;
+	glm::vec3 edge2 = V2 - V0;
+	glm::vec3 normal = glm::cross(edge1, edge2);
+
+	float area = glm::length(normal);
+
+	glm::vec3 vp0 = P - V0;
+	glm::vec3 vp1 = P - V1;
+	glm::vec3 vp2 = P - V2;
+
+	float u = glm::length(glm::cross(edge1, vp2)) / area;
+	float v = glm::length(glm::cross(edge2, vp0)) / area;
+	float w = 1.0f - u - v;
+
+	return glm::vec3(u, v, w);
+}
+
+glm::vec3 interpolateNormals(const glm::vec3& N0, const glm::vec3& N1, const glm::vec3& N2, const glm::vec3& barycentricCoords) {
+	return barycentricCoords.x * N0 + barycentricCoords.y * N1 + barycentricCoords.z * N2;
 }
 
 void Triangle::Draw(Shader* shader)
 {
 	glm::vec3 edge1 = m_Points[1] - m_Points[0];
 	glm::vec3 edge2 = m_Points[2] - m_Points[0];
-	glm::vec3 normal = glm::cross(edge1, edge2);
-	shader->SetUniformVec3f("normal", glm::normalize(normal));
+	glm::vec3 normal = glm::normalize(glm::cross(edge1, edge2));
+	auto tmp = (m_Points[0] + m_Points[1] + m_Points[2]) / 3.f;
+	glm::vec3 bar = calculateBarycentricCoordinates(tmp, m_Points[0], m_Points[1], m_Points[2]);
+	glm::vec3 test = glm::normalize(m_Normals[0] / 3.f + m_Normals[1] / 3.f + m_Normals[2] / 3.f);
+	shader->SetUniformVec3f("normal", test);
 	glBindVertexArray(m_VAO);
 	glDrawArrays(GL_LINES, 0, static_cast<unsigned int>(m_FilledLines.size()));
 }

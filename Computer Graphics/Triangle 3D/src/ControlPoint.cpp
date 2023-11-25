@@ -49,6 +49,7 @@ void ControlPoint::UpdateZ()
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
 	glBufferSubData(GL_ARRAY_BUFFER,3 * sizeof(float) * id + 2 * sizeof(float), sizeof(z), &z);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	m_Positions[id].z = z;
 }
 
 ControlPoint::ControlPoint(int id)
@@ -107,11 +108,13 @@ glm::vec3 ControlPoint::GetPu(float x, float y)
 		{
 			float Bx = binomialCoefficients(2, i) * pow(x, i) * pow(1 - x, 2 - i);
 			float By = binomialCoefficients(3, j) * pow(y, j) * pow(1 - y, 3 - j);
-			result += (glm::normalize(m_Positions[(i + 1) * controlPointsPerSide + j]) - 
-				glm::normalize(m_Positions[i * controlPointsPerSide + j])) * Bx * By;
+			result += ((m_Positions[(i + 1) * controlPointsPerSide + j] - glm::vec3(Shape::m_Position, Shape::m_Position, 0.f)) -
+				(m_Positions[i * controlPointsPerSide + j] - glm::vec3(Shape::m_Position, Shape::m_Position, 0.f))) / 
+				glm::vec3(Shape::m_Width, Shape::m_Height, Shape::m_Width)
+				* Bx * By;
 		}
 	}
-	return static_cast<float>(controlPointsPerSide) * result;
+	return static_cast<float>(controlPointsPerSide) * result * static_cast<float>(Shape::m_Width);
 }
 
 glm::vec3 ControlPoint::GetPv(float x, float y)
@@ -127,11 +130,13 @@ glm::vec3 ControlPoint::GetPv(float x, float y)
 		{
 			float Bx = binomialCoefficients(3, i) * pow(x, i) * pow(1 - x, 3 - i);
 			float By = binomialCoefficients(2, j) * pow(y, j) * pow(1 - y, 2 - j);
-			result += (glm::normalize(m_Positions[i * controlPointsPerSide + j + 1]) -
-				glm::normalize(m_Positions[i * controlPointsPerSide + j])) * Bx * By;
+			result += ((m_Positions[i * controlPointsPerSide + j + 1] - glm::vec3(Shape::m_Position, Shape::m_Position, 0.f)) -
+				(m_Positions[i * controlPointsPerSide + j] - glm::vec3(Shape::m_Position, Shape::m_Position, 0.f))) /
+				glm::vec3(Shape::m_Width, Shape::m_Height, Shape::m_Width)
+				* Bx * By;
 		}
 	}
-	return static_cast<float>(controlPointsPerSide) * result;
+	return static_cast<float>(controlPointsPerSide) * result * static_cast<float>(Shape::m_Width);
 }
 
 void ControlPoint::DrawAll()
