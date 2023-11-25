@@ -32,20 +32,19 @@ Triangle::Triangle(glm::vec3 vertices[3])
 	glGenVertexArrays(1, &m_VAO);
 }
 
-glm::vec3 calculateBarycentricCoordinates(const glm::vec3& P, const glm::vec3& V0, const glm::vec3& V1, const glm::vec3& V2) {
-	glm::vec3 edge1 = V1 - V0;
-	glm::vec3 edge2 = V2 - V0;
-	glm::vec3 normal = glm::cross(edge1, edge2);
-
-	float area = glm::length(normal);
-
-	glm::vec3 vp0 = P - V0;
-	glm::vec3 vp1 = P - V1;
-	glm::vec3 vp2 = P - V2;
-
-	float u = glm::length(glm::cross(edge1, vp2)) / area;
-	float v = glm::length(glm::cross(edge2, vp0)) / area;
-	float w = 1.0f - u - v;
+glm::vec3 calculateBarycentricCoordinates(const glm::vec3& p, const glm::vec3& a, const glm::vec3& b, const glm::vec3& c) {
+	glm::vec3 v0 = b - a;
+	glm::vec3 v1 = c - a;
+	glm::vec3 v2 = p - a;
+	float d00 = glm::dot(v0, v0);
+	float d01 = glm::dot(v0, v1);
+	float d11 = glm::dot(v1, v1);
+	float d20 = glm::dot(v2, v0);
+	float d21 = glm::dot(v2, v1);
+	float denom = d00 * d11 - d01 * d01;
+	float v = (d11 * d20 - d01 * d21) / denom;
+	float w = (d00 * d21 - d01 * d20) / denom;
+	float u = 1.0f - v - w;
 
 	return glm::vec3(u, v, w);
 }

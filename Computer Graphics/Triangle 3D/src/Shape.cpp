@@ -130,34 +130,34 @@ void Shape::GenerateTriangles()
 		{
 			glm::vec3 triangleVertices[3] =
 			{
-				{ 
-					m_Position + i * m_Width / n, m_Position + j * m_Height / m, 
-					ControlPoint::GetZOfPoint(m_Position + i * m_Width / n, m_Position + j * m_Height / m)
-				},
-				{ 
-					m_Position + (i + 1) * m_Width / n, m_Position + j * m_Height / m, 
+				{
+					m_Position + (i + 1) * m_Width / n, m_Position + j * m_Height / m,
 					ControlPoint::GetZOfPoint(m_Position + (i + 1) * m_Width / n, m_Position + j * m_Height / m)
 				},
-				{ 
-					m_Position + i * m_Width / n, std::ceil(m_Position + (j + 1) * m_Height / m) + 1.f, 
+				{
+					m_Position + i * m_Width / n, m_Position + j * m_Height / m,
+					ControlPoint::GetZOfPoint(m_Position + i * m_Width / n, m_Position + j * m_Height / m)
+				},
+				{
+					m_Position + i * m_Width / n, std::ceil(m_Position + (j + 1) * m_Height / m) + 1.f,
 					ControlPoint::GetZOfPoint(m_Position + i * m_Width / n, std::ceil(m_Position + (j + 1) * m_Height / m) + 1.f)
-				}
+				},
 			};
 			m_Triangles.push_back(new Triangle(triangleVertices));
 			glm::vec3 triangleVertices2[3] =
 			{
 				{
+					m_Position + (i + 1) * m_Width / n, m_Position + j * m_Height / m,
+					ControlPoint::GetZOfPoint(m_Position + (i + 1) * m_Width / n, m_Position + j * m_Height / m)
+				},
+				{
 					m_Position + i * m_Width / n, std::ceil(m_Position + (j + 1) * m_Height / m) + 1.f,
 					ControlPoint::GetZOfPoint(m_Position + i * m_Width / n, std::ceil(m_Position + (j + 1) * m_Height / m) + 1.f)
 				},
 				{
-					m_Position + (i + 1) * m_Width / n, m_Position + j * m_Height / m,
-					ControlPoint::GetZOfPoint(m_Position + (i + 1) * m_Width / n, m_Position + j * m_Height / m)
-				},
-				{ 
-					m_Position + (i + 1) * m_Width / n, std::ceil(m_Position + (j + 1) * m_Height / m) + 1.f, 
+					m_Position + (i + 1) * m_Width / n, std::ceil(m_Position + (j + 1) * m_Height / m) + 1.f,
 					ControlPoint::GetZOfPoint(m_Position + (i + 1) * m_Width / n, std::ceil(m_Position + (j + 1) * m_Height / m) + 1.f)
-				}
+				},
 			};
 			m_Triangles.push_back(new Triangle(triangleVertices2));
 		}
