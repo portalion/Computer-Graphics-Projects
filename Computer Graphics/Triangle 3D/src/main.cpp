@@ -4,6 +4,7 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
+#include <imfilebrowser.h>
 
 #include <iostream>
 #include <glm/glm.hpp>
@@ -96,6 +97,15 @@ int main(void)
     
     glfwSetScrollCallback(window, scroll_callback);
 
+    ImGui::FileBrowser setTextureDialog;
+    ImGui::FileBrowser setNormalMapDialog;
+
+    // (optional) set browser properties
+    setTextureDialog.SetTitle("Choose image file");
+    setTextureDialog.SetTypeFilters({ ".png", ".jpg" }); 
+    setNormalMapDialog.SetTitle("Choose image file");
+    setNormalMapDialog.SetTypeFilters({ ".png", ".jpg" });
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -163,7 +173,29 @@ int main(void)
         ImGui::SetNextWindowSize(ImVec2(300, Globals::Height), ImGuiCond_FirstUseEver);
         ImGui::Begin("PointsMenu", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
         test.DisplayMenu();
+        ImGui::Checkbox("Use Texture", &Globals::UseTexture);
+        ImGui::SameLine();
+        if (ImGui::Button("Choose Texture"))
+            setTextureDialog.Open();
+        ImGui::Checkbox("Use NormalMap", &Globals::UseNormalMap);
+        ImGui::SameLine();
+        if (ImGui::Button("Choose NormalMap"))
+            setNormalMapDialog.Open();
         ImGui::End();
+
+        setTextureDialog.Display();
+        setNormalMapDialog.Display();
+
+        if (setTextureDialog.HasSelected())
+        {
+            std::cout << "Selected filename" << setTextureDialog.GetSelected().string() << std::endl;
+            setTextureDialog.ClearSelected();
+        }
+        if (setNormalMapDialog.HasSelected())
+        {
+            std::cout << "Selected filename" << setNormalMapDialog.GetSelected().string() << std::endl;
+            setNormalMapDialog.ClearSelected();
+        }
 
         if(doAnimation)Globals::lightSource->Update(deltaTime);
         Globals::lightSource->Draw();
