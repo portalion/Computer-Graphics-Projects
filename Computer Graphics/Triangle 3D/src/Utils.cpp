@@ -33,7 +33,7 @@ namespace Globals
     glm::vec3 lightColor = glm::vec3(1.f, 1.f, 1.f);
 
     bool UseTexture = false;
-    std::string TexturePath = "";
+    unsigned int Texture = 0;
     bool UseNormalMap = false;
-    std::string NormalMapPath = "";
+    unsigned int NormalMap = 0;
 }

@@ -4,6 +4,7 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
+#include <stb_image/stb_image.h>
 #include <imfilebrowser.h>
 
 #include <iostream>
@@ -18,6 +19,7 @@
 #include "LightSource.h"
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+void setupImage(std::string path, bool isNormalMap);
 
 float deltaTime = 0.0f;	// Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
@@ -188,12 +190,12 @@ int main(void)
 
         if (setTextureDialog.HasSelected())
         {
-            std::cout << "Selected filename" << setTextureDialog.GetSelected().string() << std::endl;
+            setupImage(setTextureDialog.GetSelected().string(), false);
             setTextureDialog.ClearSelected();
         }
         if (setNormalMapDialog.HasSelected())
         {
-            std::cout << "Selected filename" << setNormalMapDialog.GetSelected().string() << std::endl;
+            setupImage(setNormalMapDialog.GetSelected().string(), true);
             setNormalMapDialog.ClearSelected();
         }
 
@@ -234,4 +236,33 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
         tmp = glm::rotate(tmp, static_cast<float>(yoffset) / 10.f, glm::vec3(1.f, 0.f, 0.f));
     Globals::ViewMatrix = glm::translate(tmp, glm::vec3(-Shape::m_Position - Shape::m_Width / 2,
         -Shape::m_Position - Shape::m_Height / 2, 0.f));
+}
+
+void setupImage(std::string path, bool isNormalMap)
+{
+    unsigned int texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    // set the texture wrapping/filtering options (on the currently bound texture object)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // load and generate the texture
+    int width, height, nrChannels;
+    unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
+    if (data)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+    stbi_image_free(data);
+
+    unsigned int* desiredPlace = isNormalMap ? &Globals::NormalMap : &Globals::Texture;
+    glDeleteTextures(1, desiredPlace);
+    *desiredPlace = texture;
 }

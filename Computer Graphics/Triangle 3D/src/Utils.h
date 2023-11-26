@@ -1,7 +1,6 @@
 #pragma once
 #include <GL/glew.h>
 #include <glm/glm.hpp>
-#include <string>
 
 #define ASSERT(x) if (!(x)) __debugbreak();
 #define GLCall(x) GLClearError();\
@@ -17,9 +16,9 @@ class LightSource;
 namespace Globals
 {
     extern bool UseTexture;
-    extern std::string TexturePath;
+    extern unsigned int Texture;
     extern bool UseNormalMap;
-    extern std::string NormalMapPath;
+    extern unsigned int NormalMap;
     extern int Height;
     extern int Width;
     extern glm::mat4 ProjectionMatrix;
