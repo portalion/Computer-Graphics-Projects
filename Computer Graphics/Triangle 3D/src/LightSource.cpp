@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Utils.h"
+#include "Shape.h"
 
 LightSource::LightSource(glm::vec3 position)
 {
@@ -77,6 +78,16 @@ LightSource::~LightSource()
 {
     glDeleteBuffers(1, &VBO);
     glDeleteVertexArrays(1, &VAO);
+}
+
+void LightSource::Update(float deltaTime)
+{
+    angle = deltaTime * 100.f;
+    float tmpX = position.x * cos(glm::radians(angle)) - position.y * sin(glm::radians(angle));
+    position.y = position.x * sin(glm::radians(angle)) + position.y * cos(glm::radians(angle));
+    position.x = tmpX;
+    positionTranslated = position + glm::vec3{ Shape::m_Position + Shape::m_Width / 2, Shape::m_Position + Shape::m_Height / 2, 0.f };
+    modelMatrix = glm::scale(glm::translate(glm::mat4(1.f), positionTranslated), { 100.f, 100.f, 100.f });
 }
 
 void LightSource::Draw()

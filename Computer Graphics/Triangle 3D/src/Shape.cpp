@@ -41,7 +41,7 @@ Shape::Shape()
 	shader.CreateShader();
 	shader.Bind();
 	shader.SetUniformMat4f("projectionMatrix", Globals::ProjectionMatrix);
-	shader.SetUniformVec3f("lightningSourcePosition", Globals::lightSource->position);
+	shader.SetUniformVec3f("lightningSourcePosition", Globals::lightSource->positionTranslated);
 
 	meshShader.AddShader("res/shaders/BasicRed.vs", ShaderType::VERTEX_SHADER);
 	meshShader.AddShader("res/shaders/BasicRed.fs", ShaderType::FRAGMENT_SHADER);
@@ -176,6 +176,7 @@ void Shape::Draw()
 	shader.SetUniformVec3f("objectColor", Globals::objectColor);
 	shader.SetUniformVec3f("lightColor", Globals::lightColor);
 	shader.SetUniform1f("m", Globals::m);
+	shader.SetUniformVec3f("lightningSourcePosition", Globals::lightSource->positionTranslated);
 
 	for (auto& triangle : m_Triangles)
 		triangle->Draw(&shader);

@@ -160,6 +160,7 @@ int main(void)
         test.DisplayMenu();
         ImGui::End();
 
+        Globals::lightSource->Update(deltaTime);
         Globals::lightSource->Draw();
 
         test.Draw();
