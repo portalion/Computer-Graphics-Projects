@@ -88,6 +88,7 @@ int main(void)
     Globals::lightSource = new LightSource({Shape::m_Position + Shape::m_Width / 2, Shape::m_Position + Shape::m_Height / 2, 500.f});
 
     bool drawMesh = false;
+    bool doAnimation = true;
 
     Shape test; 
     test.GenerateTriangles();
@@ -146,6 +147,8 @@ int main(void)
             test.GenerateMesh();
         }
         ImGui::Checkbox("Draw Mesh", &drawMesh);
+        ImGui::SameLine();
+        ImGui::Checkbox("Do Animation", &doAnimation);
         ImGui::SliderInt("m", &Globals::m, 1, 100);
         ImGui::SliderFloat("kd", &Globals::kd, 0, 1);
         ImGui::SliderFloat("ks", &Globals::ks, 0, 1);
@@ -153,6 +156,8 @@ int main(void)
         ImGui::ColorPicker3("Light Color", &Globals::lightColor.x);
         if (ImGui::Button("Reset Position"))
             Globals::ViewMatrix = glm::mat4(1.f);
+        if (ImGui::SliderFloat("Light z", &Globals::lightSource->position.z, 0.f, 1000.f))
+            Globals::lightSource->Update(0.f);
         ImGui::End();
         ImGui::SetNextWindowPos(ImVec2(Globals::Width - 600, 0), ImGuiCond_FirstUseEver);
         ImGui::SetNextWindowSize(ImVec2(300, Globals::Height), ImGuiCond_FirstUseEver);
@@ -160,7 +165,7 @@ int main(void)
         test.DisplayMenu();
         ImGui::End();
 
-        Globals::lightSource->Update(deltaTime);
+        if(doAnimation)Globals::lightSource->Update(deltaTime);
         Globals::lightSource->Draw();
 
         test.Draw();
