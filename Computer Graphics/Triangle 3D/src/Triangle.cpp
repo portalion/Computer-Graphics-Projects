@@ -151,6 +151,5 @@ void Triangle::GenerateFillVertices()
 void Triangle::Draw(Shader* shader)
 {
 	glBindVertexArray(m_VAO);
-	glBindTexture(GL_TEXTURE_2D, Globals::Texture);
 	glDrawArrays(GL_LINES, 0, static_cast<unsigned int>(m_FilledLines.size()));
 }

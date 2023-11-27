@@ -42,6 +42,8 @@ Shape::Shape()
 	shader.Bind();
 	shader.SetUniformMat4f("projectionMatrix", Globals::ProjectionMatrix);
 	shader.SetUniformVec3f("lightningSourcePosition", Globals::lightSource->positionTranslated);
+	shader.SetUniform1i("Texture", 0);
+	shader.SetUniform1i("NormalMap", 1);
 
 	meshShader.AddShader("res/shaders/BasicRed.vs", ShaderType::VERTEX_SHADER);
 	meshShader.AddShader("res/shaders/BasicRed.fs", ShaderType::FRAGMENT_SHADER);
@@ -178,6 +180,13 @@ void Shape::Draw()
 	shader.SetUniform1f("m", Globals::m);
 	shader.SetUniformVec3f("lightningSourcePosition", Globals::lightSource->positionTranslated);
 	shader.SetUniform1i("showTexture", Globals::UseTexture && Globals::Texture != 0);
+	shader.SetUniform1i("showNormals", Globals::UseNormalMap && Globals::NormalMap != 0);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, Globals::Texture);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, Globals::NormalMap);
+
 	for (auto& triangle : m_Triangles)
 		triangle->Draw(&shader);
 
