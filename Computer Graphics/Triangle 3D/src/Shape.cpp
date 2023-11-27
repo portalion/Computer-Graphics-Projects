@@ -177,7 +177,7 @@ void Shape::Draw()
 	shader.SetUniformVec3f("lightColor", Globals::lightColor);
 	shader.SetUniform1f("m", Globals::m);
 	shader.SetUniformVec3f("lightningSourcePosition", Globals::lightSource->positionTranslated);
-
+	shader.SetUniform1i("showTexture", Globals::UseTexture && Globals::Texture != 0);
 	for (auto& triangle : m_Triangles)
 		triangle->Draw(&shader);
 

@@ -7,6 +7,7 @@
 #include "Shader.h"
 #include "Utils.h"
 #include "ControlPoint.h"
+#include "Shape.h"
 
 Triangle::~Triangle()
 {
@@ -120,6 +121,10 @@ void Triangle::GenerateFillVertices()
 				calculateBarycentricCoordinates(first.position, m_Points[0], m_Points[1], m_Points[2]));
 			second.normal = interpolateNormals(m_Normals[0], m_Normals[1], m_Normals[2],
 				calculateBarycentricCoordinates(second.position, m_Points[0], m_Points[1], m_Points[2]));
+			first.texCoord = glm::vec2{ (first.position.x - Shape::m_Position) / Shape::m_Width, 1.f -(first.position.y - Shape::m_Position) / Shape::m_Height };
+			second.texCoord = glm::vec2{ (second.position.x - Shape::m_Position) / Shape::m_Width, 1.f -(second.position.y - Shape::m_Position) / Shape::m_Height };
+			if (first.texCoord.y > 1.0 || second.texCoord.y > 1.0)
+				first.texCoord.x = 0;
 			m_FilledLines.push_back(first);
 			m_FilledLines.push_back(second);
 		}
@@ -134,15 +139,18 @@ void Triangle::GenerateFillVertices()
 	glBindVertexArray(m_VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
 	glBufferData(GL_ARRAY_BUFFER, m_FilledLines.size() * sizeof(Vertex), m_FilledLines.data(), GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void Triangle::Draw(Shader* shader)
 {
 	glBindVertexArray(m_VAO);
+	glBindTexture(GL_TEXTURE_2D, Globals::Texture);
 	glDrawArrays(GL_LINES, 0, static_cast<unsigned int>(m_FilledLines.size()));
 }
