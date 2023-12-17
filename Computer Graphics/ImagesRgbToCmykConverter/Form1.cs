@@ -12,8 +12,35 @@ namespace ImagesRgbToCmykConverter
         public List<List<Point>> bezierControlPoints;
         public List<Color> colorList;
         public int ActiveControlPoint = -1;
+        public List<List<Point>> bezierCurves;
 
         public int ActiveIndex { get; set; }
+
+        public List<Point> CubicBezierToPoints(Point P0, Point P1, Point P2, Point P3, double step = 0.01)
+        {
+            var pointList = new List<Point>();
+            for (var t = 0.00; t <= 1; t += step)
+            {
+                var x = Math.Pow(1 - t, 3) * P0.X + 3 * Math.Pow(1 - t, 2) * t * P1.X +
+                        3 * (1 - t) * Math.Pow(t, 2) * P2.X + Math.Pow(t, 3) * P3.X;
+                var y = Math.Pow(1 - t, 3) * P0.Y + 3 * Math.Pow(1 - t, 2) * t * P1.Y +
+                        3 * (1 - t) * Math.Pow(t, 2) * P2.Y + Math.Pow(t, 3) * P3.Y;
+                pointList.Add(new Point((int)x, (int)y));
+            }
+            return pointList;
+        }
+
+        public List<List<Point>> GetBezierCurves()
+        {
+            List<List<Point>> result = new List<List<Point>>();
+
+            foreach(var controls in bezierControlPoints)
+            {
+                result.Add(CubicBezierToPoints(controls[0], controls[1],
+                    controls[2], controls[3]));
+            }
+            return result;
+        }
 
         public void DrawLine(int index, Color color)
         {
@@ -43,6 +70,7 @@ namespace ImagesRgbToCmykConverter
             }
             else
                 DrawLine(ActiveIndex, colorList[ActiveIndex]);
+            bezierCurves = GetBezierCurves();
         }
 
         public void InitializePlot()
@@ -89,6 +117,8 @@ namespace ImagesRgbToCmykConverter
             }
         }
 
+
+
         private Color GetCmykFromPixel(int i, int j, Color color)
         {
             double c = 1.0 - (double)mainImageBitmap.GetPixel(i, j).R / 255.0;
@@ -98,7 +128,24 @@ namespace ImagesRgbToCmykConverter
             c = c - k;
             m = m - k;
             y = y - k;
-
+            
+            double ck = BezierPlot.Height - bezierCurves[0].FirstOrDefault(p => p.X >= k * BezierPlot.Width).Y;
+            ck = ck / BezierPlot.Height;
+            c += ck;
+            c = Math.Min(1, c);
+            c = Math.Max(0, c);
+            double mk = BezierPlot.Height - bezierCurves[1].FirstOrDefault(p => p.X >= k * BezierPlot.Width).Y;
+            mk = mk / BezierPlot.Height;
+            m += mk;
+            m = Math.Min(1, m);
+            m = Math.Max(0, m);
+            double yk = BezierPlot.Height - bezierCurves[2].FirstOrDefault(p => p.X >= k * BezierPlot.Width).Y;
+            yk = yk / BezierPlot.Height;
+            y += yk;
+            y = Math.Min(1, y);
+            y = Math.Max(0, y);
+            k = BezierPlot.Height - bezierCurves[3].FirstOrDefault(p => p.X >= k * BezierPlot.Width).Y;
+            k = k / BezierPlot.Height;
             if(color == Color.Cyan)
                 return Color.FromArgb(255 - (int)(c * 255), 255, 255);
             if (color == Color.Magenta)
@@ -221,6 +268,78 @@ namespace ImagesRgbToCmykConverter
                 }
                 DrawPlot();
             }
+        }
+
+        private void FullBackButton_Click(object sender, EventArgs e)
+        {
+            bezierControlPoints = new List<List<Point>>()
+            {
+                new List<Point>()
+                {
+                    new Point() { X = 6,Y = 386 },
+                    new Point() { X = 156,Y = 377 },
+                    new Point() { X = 305,Y = 386 },
+                    new Point() { X = 474,Y = 381 }
+                },
+                new List<Point>()
+                {
+                    new Point() { X = 6,Y = 386 },
+                    new Point() { X = 156,Y = 377 },
+                    new Point() { X = 305,Y = 386 },
+                    new Point() { X = 474,Y = 381 }
+                },                
+                new List<Point>()
+                {
+                    new Point() { X = 6,Y = 386 },
+                    new Point() { X = 156,Y = 377 },
+                    new Point() { X = 305,Y = 386 },
+                    new Point() { X = 474,Y = 381 }
+                },
+                new List<Point>()
+                {
+                    new Point() { X = 6,Y = 386 },
+                    new Point() { X = 160,Y = 260 },
+                    new Point() { X = 320,Y = 130 },
+                    new Point() { X = 474,Y = 6 }
+                }
+            };
+            DrawPlot();
+        }
+
+        private void NoBackingButton_Click(object sender, EventArgs e)
+        {
+            bezierControlPoints = new List<List<Point>>()
+            {
+                new List<Point>()
+                {
+                    new Point() { X = 6,Y = 386 },
+                    new Point() { X = 28,Y = 371 },
+                    new Point() { X = 463,Y = 12 },
+                    new Point() { X = 474,Y = 6 }
+                },
+                new List<Point>()
+                {
+                    new Point() { X = 6,Y = 386 },
+                    new Point() { X = 295,Y = 253 },
+                    new Point() { X = 367,Y = 94 },
+                    new Point() { X = 474,Y = 6 }
+                },
+                new List<Point>()
+                {
+                    new Point() { X = 6,Y = 386 },
+                    new Point() { X = 283,Y = 256 },
+                    new Point() { X = 348,Y = 146 },
+                    new Point() { X = 474,Y = 6 }
+                },
+                new List<Point>()
+                {
+                    new Point() { X = 6,Y = 386 },
+                    new Point() { X = 160,Y = 386 },
+                    new Point() { X = 320,Y = 386 },
+                    new Point() { X = 474,Y = 386 }
+                }
+            };
+            DrawPlot();
         }
     }
 }

@@ -328,6 +328,7 @@
             this.NoBackingButton.TabIndex = 0;
             this.NoBackingButton.Text = "0% cofnięcia";
             this.NoBackingButton.UseVisualStyleBackColor = true;
+            this.NoBackingButton.Click += new System.EventHandler(this.NoBackingButton_Click);
             // 
             // ShowAllButton
             // 
@@ -349,6 +350,7 @@
             this.FullBackButton.TabIndex = 2;
             this.FullBackButton.Text = "100% cofnięcia";
             this.FullBackButton.UseVisualStyleBackColor = true;
+            this.FullBackButton.Click += new System.EventHandler(this.FullBackButton_Click);
             // 
             // ChangePictureButton
             // 
