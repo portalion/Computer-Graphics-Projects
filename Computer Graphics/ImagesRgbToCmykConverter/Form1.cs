@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using System.Windows.Forms;
+using System.Xml.Serialization;
 
 namespace ImagesRgbToCmykConverter
 {
@@ -160,6 +161,41 @@ namespace ImagesRgbToCmykConverter
             else
                 bezierControlPoints[ActiveIndex][ActiveControlPoint] = toSetUp;
             DrawPlot();
+        }
+
+        private void SaveCurveButton_Click(object sender, EventArgs e)
+        {
+            saveFileDialog.Filter = "Bezier Files (*.bez)|*.bez";
+            saveFileDialog.RestoreDirectory = true;
+            if (saveFileDialog.ShowDialog(this) == DialogResult.OK)
+            {
+                string filepath = saveFileDialog.FileName;
+
+                XmlSerializer ser = new XmlSerializer(typeof(List<Point>));
+                TextWriter writer = new StreamWriter(filepath);
+                ser.Serialize(writer, bezierControlPoints[ActiveIndex]);
+                writer.Close();
+            }
+        }
+
+        private void LoadCurveButton_Click(object sender, EventArgs e)
+        {
+            openFileDialog.Filter = "Bezier Files (*.bez)|*.bez"; 
+            openFileDialog.CheckFileExists = true;
+            openFileDialog.CheckPathExists = true;
+            if (openFileDialog.ShowDialog(this) == DialogResult.OK)
+            {
+                string filepath = openFileDialog.FileName;
+
+                XmlSerializer ser = new XmlSerializer(typeof(List<Point>));
+                using (Stream reader = new FileStream(filepath, FileMode.Open))
+                {
+                    var deserialized = ser.Deserialize(reader) as List<Point>;
+                    if (deserialized is null) return;
+                    bezierControlPoints[ActiveIndex] = deserialized;
+                }
+                DrawPlot();
+            }
         }
     }
 }

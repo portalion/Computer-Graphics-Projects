@@ -58,6 +58,7 @@
             this.BlackAdnWhiteButton = new System.Windows.Forms.Button();
             this.SavePicturesButton = new System.Windows.Forms.Button();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -379,6 +380,7 @@
             this.SaveCurveButton.TabIndex = 5;
             this.SaveCurveButton.Text = "Save curve";
             this.SaveCurveButton.UseVisualStyleBackColor = true;
+            this.SaveCurveButton.Click += new System.EventHandler(this.SaveCurveButton_Click);
             // 
             // GCRButton
             // 
@@ -399,6 +401,7 @@
             this.LoadCurveButton.TabIndex = 7;
             this.LoadCurveButton.Text = "Load curve";
             this.LoadCurveButton.UseVisualStyleBackColor = true;
+            this.LoadCurveButton.Click += new System.EventHandler(this.LoadCurveButton_Click);
             // 
             // tableLayoutPanel7
             // 
@@ -499,5 +502,6 @@
         private Button SavePicturesButton;
         private PictureBox CurrentImage;
         private OpenFileDialog openFileDialog;
+        private SaveFileDialog saveFileDialog;
     }
 }
