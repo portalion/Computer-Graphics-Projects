@@ -89,22 +89,47 @@ namespace ImagesRgbToCmykConverter
             }
         }
 
+        private Color GetCmykFromPixel(int i, int j, Color color)
+        {
+            double c = 1.0 - (double)mainImageBitmap.GetPixel(i, j).R / 255.0;
+            double m = 1.0 - (double)mainImageBitmap.GetPixel(i, j).G / 255.0;
+            double y = 1.0 - (double)mainImageBitmap.GetPixel(i, j).B / 255.0;
+            double k = Math.Min(Math.Min(c, m), y);
+            c = c - k;
+            m = m - k;
+            y = y - k;
+
+            if(color == Color.Cyan)
+                return Color.FromArgb(255 - (int)(c * 255), 255, 255);
+            if (color == Color.Magenta)
+                return Color.FromArgb(255, 255 - (int)(m * 255), 255);
+            if (color == Color.Yellow)
+                return Color.FromArgb(255, 255, 255 - (int)(y * 255));
+            return Color.FromArgb(255 - (int) (k * 255),
+                255 - (int)(k * 255),
+                255 - (int)(k * 255));
+        }
+
         private Bitmap GenerateBitmapFromRules(Color color) 
         {
             if (mainImageBitmap is null) throw new InvalidDataException();
             Bitmap result = new Bitmap(mainImageBitmap);
             for (int i = 0; i < result.Width; i++)
                 for (int j = 0; j < result.Height; j++)
-                    result.SetPixel(i, j, color);
+                {
+                    var cmyk = GetCmykFromPixel(i, j, color);
+
+                    result.SetPixel(i, j, cmyk);
+                }
             return result;
         }
 
         private void ShowAllButton_Click(object sender, EventArgs e)
         {
             if (mainImage is null) return;
-            CyanImage.Image = GenerateBitmapFromRules(Color.RebeccaPurple);
-            MagentaImage.Image = GenerateBitmapFromRules(Color.BlueViolet);
-            YellowImage.Image = GenerateBitmapFromRules(Color.GreenYellow);
+            CyanImage.Image = GenerateBitmapFromRules(Color.Cyan);
+            MagentaImage.Image = GenerateBitmapFromRules(Color.Magenta);
+            YellowImage.Image = GenerateBitmapFromRules(Color.Yellow);
             BlackAndWhiteImage.Image = GenerateBitmapFromRules(Color.Black);
 
         }
