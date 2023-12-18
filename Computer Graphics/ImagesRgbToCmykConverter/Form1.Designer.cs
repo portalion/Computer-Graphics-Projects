@@ -59,6 +59,7 @@
             this.SavePicturesButton = new System.Windows.Forms.Button();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -372,6 +373,7 @@
             this.UCRButton.TabIndex = 4;
             this.UCRButton.Text = "UCR";
             this.UCRButton.UseVisualStyleBackColor = true;
+            this.UCRButton.Click += new System.EventHandler(this.UCRButton_Click);
             // 
             // SaveCurveButton
             // 
@@ -393,6 +395,7 @@
             this.GCRButton.TabIndex = 6;
             this.GCRButton.Text = "GCR";
             this.GCRButton.UseVisualStyleBackColor = true;
+            this.GCRButton.Click += new System.EventHandler(this.GCRButton_Click);
             // 
             // LoadCurveButton
             // 
@@ -429,6 +432,7 @@
             this.BlackAdnWhiteButton.TabIndex = 0;
             this.BlackAdnWhiteButton.Text = "Black and White";
             this.BlackAdnWhiteButton.UseVisualStyleBackColor = true;
+            this.BlackAdnWhiteButton.Click += new System.EventHandler(this.BlackAdnWhiteButton_Click);
             // 
             // SavePicturesButton
             // 
@@ -439,6 +443,7 @@
             this.SavePicturesButton.TabIndex = 1;
             this.SavePicturesButton.Text = "Save Pictures";
             this.SavePicturesButton.UseVisualStyleBackColor = true;
+            this.SavePicturesButton.Click += new System.EventHandler(this.SavePicturesButton_Click);
             // 
             // openFileDialog
             // 
@@ -505,5 +510,6 @@
         private PictureBox CurrentImage;
         private OpenFileDialog openFileDialog;
         private SaveFileDialog saveFileDialog;
+        private FolderBrowserDialog folderBrowserDialog1;
     }
 }

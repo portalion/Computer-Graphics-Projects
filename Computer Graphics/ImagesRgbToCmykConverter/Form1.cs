@@ -1,6 +1,8 @@
+using System.Drawing;
 using System.Net.Http.Headers;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ImagesRgbToCmykConverter
 {
@@ -340,6 +342,110 @@ namespace ImagesRgbToCmykConverter
                 }
             };
             DrawPlot();
+        }
+
+        private void UCRButton_Click(object sender, EventArgs e)
+        {
+            bezierControlPoints = new List<List<Point>>()
+            { 
+                new List<Point>()
+                {
+                    new Point() { X = 6,Y = 386 },
+                    new Point() { X = 436,Y = 53 },
+                    new Point() { X = 336,Y = 84 },
+                    new Point() { X = 474,Y = 6 }
+                },
+                new List<Point>()
+                {
+                    new Point() { X = 6,Y = 386 },
+                    new Point() { X = 357,Y = 208 },
+                    new Point() { X = 313,Y = 110 },
+                    new Point() { X = 474,Y = 82 }
+                },
+                new List<Point>()
+                {
+                    new Point() { X = 6,Y = 386 },
+                    new Point() { X = 374,Y = 213 },
+                    new Point() { X = 308,Y = 115 },
+                    new Point() { X = 474,Y = 127 }
+                },
+                new List<Point>()
+                {
+                    new Point() { X = 6,Y = 386 },
+                    new Point() { X = 480,Y = 392 },
+                    new Point() { X = 435,Y = 392 },
+                    new Point() { X = 474,Y = 8 }
+                }
+            };
+            DrawPlot();
+        }
+
+        private void GCRButton_Click(object sender, EventArgs e)
+        {
+            bezierControlPoints = new List<List<Point>>()
+            {
+                new List<Point>()
+                {
+                    new Point() { X = 6,Y = 386 },
+                    new Point() { X = 436,Y = 33 },
+                    new Point() { X = 465,Y = 105 },
+                    new Point() { X = 474,Y = 99 }
+                },
+                new List<Point>()
+                {
+                    new Point() { X = 6,Y = 386 },
+                    new Point() { X = 316,Y = 278 },
+                    new Point() { X = 294,Y = 145 },
+                    new Point() { X = 474,Y = 129 }
+                },
+                new List<Point>()
+                {
+                    new Point() { X = 6,Y = 386 },
+                    new Point() { X = 247,Y = 318 },
+                    new Point() { X = 304,Y = 151 },
+                    new Point() { X = 474,Y = 127 }
+                },
+                new List<Point>()
+                {
+                    new Point() { X = 6,Y = 386 },
+                    new Point() { X = 252,Y = 392 },
+                    new Point() { X = 412,Y = 392 },
+                    new Point() { X = 474,Y = 6 }
+                }
+            };
+            DrawPlot();
+        }
+
+        private void BlackAdnWhiteButton_Click(object sender, EventArgs e)
+        {
+            if (mainImageBitmap is null) return;
+            using (Form form = new Form())
+            {
+                Bitmap img = GenerateBitmapFromRules(Color.Black);
+
+                form.StartPosition = FormStartPosition.CenterScreen;
+                form.Size = img.Size;
+
+                PictureBox pb = new PictureBox();
+                pb.Dock = DockStyle.Fill;
+                pb.Image = img;
+
+                form.Controls.Add(pb);
+                form.ShowDialog();
+            }
+        }
+
+        private void SavePicturesButton_Click(object sender, EventArgs e)
+        {
+            if (mainImageBitmap is null || CyanImage.Image is null) return;
+            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+            {
+                string path = folderBrowserDialog1.SelectedPath;
+                CyanImage.Image.Save(path + "\\cyan.png");
+                MagentaImage.Image.Save(path + "\\magenta.png");
+                YellowImage.Image.Save(path + "\\yellow.png");
+                BlackAndWhiteImage.Image.Save(path + "\\black.png");
+            }
         }
     }
 }
