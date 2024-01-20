@@ -1,15 +1,17 @@
-#include <GLFW/glfw3.h>
+#include "Scene.h"
 
 int main(void)
 {
-    GLFWwindow* window;
-
     /* Initialize the library */
     if (!glfwInit())
         return -1;
 
-    /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+   
+    GLFWwindow* window = glfwCreateWindow(Scene::ScreenSize.x, Scene::ScreenSize.y, "Scene viewer", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -19,19 +21,28 @@ int main(void)
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
-    /* Loop until the user closes the window */
-    while (!glfwWindowShouldClose(window))
-    {
-        /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT);
+    glfwSwapInterval(1);
 
-        /* Swap front and back buffers */
-        glfwSwapBuffers(window);
+    if (glewInit() != GLEW_OK)
+        std::cout << "GLEW ERROR" << std::endl;
 
-        /* Poll for and process events */
-        glfwPollEvents();
-    }
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.IniFilename = nullptr;
+    io.LogFilename = nullptr;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
 
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(window, true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
+    ImGui_ImplOpenGL3_Init();
+
+    Scene scene(window);
+    scene.Run();
+
+    glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
 }
