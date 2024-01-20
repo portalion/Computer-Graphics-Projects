@@ -8,11 +8,18 @@
 #include <iostream>
 #include <glm/glm.hpp>
 
+#include "Shader.h"
+
 class Scene
 {
 private:
 	GLFWwindow* m_Window;
-	bool running;
+	bool m_Running;
+
+	//TODO: change it
+	Shader temporaryShader;
+
+	glm::mat4 m_ProjectionMatrix;
 
 	void Update();
 	void HandleInput();

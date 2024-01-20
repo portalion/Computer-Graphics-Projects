@@ -9,7 +9,8 @@ int main(void)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
    
     GLFWwindow* window = glfwCreateWindow(Scene::ScreenSize.x, Scene::ScreenSize.y, "Scene viewer", NULL, NULL);
     if (!window)
