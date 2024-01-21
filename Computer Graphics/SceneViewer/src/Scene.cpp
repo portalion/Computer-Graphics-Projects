@@ -27,6 +27,12 @@ Scene::Scene(GLFWwindow* window)
 	InitializeScene();
 }
 
+Scene::~Scene()
+{
+	for (auto& cube : cubes)
+		delete cube;
+}
+
 void Scene::Update()
 {
 
@@ -76,7 +82,5 @@ void Scene::Run()
 		GLCall(glfwSwapBuffers(m_Window));
 		GLCall(glfwPollEvents());
 	}
-	for (auto& cube : cubes)
-		delete cube;
 	glfwSetWindowShouldClose(m_Window, GLFW_TRUE);
 }

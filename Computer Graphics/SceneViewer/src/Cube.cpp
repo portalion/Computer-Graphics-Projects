@@ -40,64 +40,25 @@ const unsigned int Cube::m_Indices[] =
 };
 #pragma endregion
 
-Cube::Cube(glm::vec3 startingPos, float scale)
-    :m_ModelMatrix{ 1.f }, m_RotationMatrix{1.f}, 
-    m_ScaleMatrix{1.f}, m_TranslationMatrix{1.f}
+void Cube::InitializeModelAsset()
 {
-    glGenVertexArrays(1, &m_VAO);
-    glGenBuffers(1, &m_VBO);
-    glGenBuffers(1, &m_IBO);
+    m_ModelAsset = new ModelAsset
+    {
+        m_Vertices,
+        m_Indices,
+        sizeof(m_Vertices),
+        sizeof(m_Indices),
+        sizeof(m_Indices) / sizeof(unsigned int),
+    };
+}
 
-    glBindVertexArray(m_VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(m_Vertices), m_Vertices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_Indices), m_Indices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-    glEnableVertexAttribArray(0);
-    glBindVertexArray(0);
-
-    SetPosition(startingPos);
-    SetScaling(scale);
+Cube::Cube(glm::vec3 startingPos, float scale)
+    :DrawableEntity(startingPos, scale)
+{
+    InitializeObject();
 }
 
 Cube::~Cube()
 {
-    glDeleteBuffers(1, &m_VBO);
-    glDeleteBuffers(1, &m_IBO);
-    glDeleteVertexArrays(1, &m_VAO);
-}
-
-void Cube::SetPosition(glm::vec3 position)
-{
-    m_TranslationMatrix = glm::translate(glm::mat4(1.f), position);
-    UpdateModelMatrix();
-}
-
-void Cube::Move(glm::vec3 position)
-{
-    m_TranslationMatrix = glm::translate(m_TranslationMatrix, position);
-    UpdateModelMatrix();
-}
-
-void Cube::Scale(float scale)
-{
-    m_ScaleMatrix = glm::scale(m_ScaleMatrix, {scale, scale, scale});
-    UpdateModelMatrix();
-}
-
-void Cube::SetScaling(float scale)
-{
-    m_ScaleMatrix = glm::scale(glm::mat4(1.f), { scale, scale, scale });
-    UpdateModelMatrix();
-}
-
-void Cube::Draw(Shader* shader)
-{
-    shader->SetUniformMat4f("u_ModelMatrix", m_ModelMatrix);
-    glBindVertexArray(m_VAO);
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr);
-    glBindVertexArray(0);
+    delete m_ModelAsset;
 }

@@ -33,6 +33,7 @@ public:
 	static const glm::vec2 ScreenSize;
 
 	Scene(GLFWwindow* window);
+	~Scene();
 
 	void Run();
 };
