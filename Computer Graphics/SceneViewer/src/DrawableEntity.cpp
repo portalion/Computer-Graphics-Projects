@@ -37,6 +37,8 @@ DrawableEntity::~DrawableEntity()
     glDeleteBuffers(1, &m_VBO);
     glDeleteBuffers(1, &m_IBO);
     glDeleteVertexArrays(1, &m_VAO);
+
+    delete m_ModelAsset;
 }
 
 void DrawableEntity::SetPosition(glm::vec3 position)
@@ -60,6 +62,18 @@ void DrawableEntity::Scale(float scale)
 void DrawableEntity::SetScaling(float scale)
 {
     m_ScaleMatrix = glm::scale(glm::mat4(1.f), { scale, scale, scale });
+    UpdateModelMatrix();
+}
+
+void DrawableEntity::Rotate(glm::mat4 rotationMatrix)
+{
+    m_RotationMatrix *= rotationMatrix;
+    UpdateModelMatrix();
+}
+
+void DrawableEntity::SetRotation(glm::mat4 rotationMatrix)
+{
+    m_RotationMatrix = rotationMatrix;
     UpdateModelMatrix();
 }
 

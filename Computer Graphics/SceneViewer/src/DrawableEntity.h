@@ -37,6 +37,9 @@ public:
 	void Move(glm::vec3 position);
 	void Scale(float scale);
 	void SetScaling(float scale);
+	void Rotate(glm::mat4 rotationMatrix);
+	void SetRotation(glm::mat4 rotationMatrix);
+	inline void SetModelMatrix(glm::mat4 modelMatrix) { m_ModelMatrix = modelMatrix; }
 
 	virtual void Update(const float& deltaTime);
 

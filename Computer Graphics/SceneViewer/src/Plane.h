@@ -1,8 +1,7 @@
 #pragma once
-#include "Shader.h"
 #include "DrawableEntity.h"
 
-class Cube : public DrawableEntity
+class Plane : public DrawableEntity
 {
 private:
 	static const float m_Vertices[];
@@ -10,6 +9,6 @@ private:
 protected:
 	void InitializeModelAsset() override;
 public:
-	Cube(glm::vec3 startingPos = { 0.f, 0.f, 0.f }, float scale = 1.f);
+	Plane(glm::vec3 startingPos = { 0.f, 0.f, 0.f }, float scale = 1.f);
 };
 

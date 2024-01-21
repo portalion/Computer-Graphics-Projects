@@ -8,7 +8,7 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include <vector>
-#include "Cube.h"
+#include "DrawableEntity.h"
 #include "Shader.h"
 
 class Scene
@@ -22,11 +22,11 @@ private:
 
 	glm::mat4 m_ProjectionMatrix;
 
-	std::vector<Cube*> cubes;
+	std::vector<DrawableEntity*> entities;
 
 	void InitializeScene();
 
-	void Update();
+	void Update(const float& deltaTime);
 	void HandleInput();
 	void Draw();
 public:

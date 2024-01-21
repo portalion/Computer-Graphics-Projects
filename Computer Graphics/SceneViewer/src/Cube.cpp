@@ -58,7 +58,3 @@ Cube::Cube(glm::vec3 startingPos, float scale)
     InitializeObject();
 }
 
-Cube::~Cube()
-{
-    delete m_ModelAsset;
-}
