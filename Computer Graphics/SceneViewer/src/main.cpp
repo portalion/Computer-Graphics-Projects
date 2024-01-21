@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include <stb_image/stb_image.h>
 
 int main(void)
 {
@@ -26,6 +27,8 @@ int main(void)
 
     if (glewInit() != GLEW_OK)
         std::cout << "GLEW ERROR" << std::endl;
+
+    stbi_set_flip_vertically_on_load(true);
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
