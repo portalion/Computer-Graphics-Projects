@@ -13,7 +13,9 @@ int main(void)
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
    
-    GLFWwindow* window = glfwCreateWindow(Scene::ScreenSize.x, Scene::ScreenSize.y, "Scene viewer", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(static_cast<int>(Scene::ScreenSize.x), 
+        static_cast<int>(Scene::ScreenSize.y), 
+        "Scene viewer", NULL, NULL);
     if (!window)
     {
         glfwTerminate();

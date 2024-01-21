@@ -7,7 +7,8 @@
 
 #include <iostream>
 #include <glm/glm.hpp>
-
+#include <vector>
+#include "Cube.h"
 #include "Shader.h"
 
 class Scene
@@ -20,6 +21,10 @@ private:
 	Shader temporaryShader;
 
 	glm::mat4 m_ProjectionMatrix;
+
+	std::vector<Cube*> cubes;
+
+	void InitializeScene();
 
 	void Update();
 	void HandleInput();

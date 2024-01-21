@@ -13,15 +13,30 @@ Scene::Scene(GLFWwindow* window)
 
     m_ProjectionMatrix = glm::perspective(90.f, ScreenSize.x / ScreenSize.y, 0.1f, 100.f);
 
+	glm::mat4 view;
+	view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f),
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f));
+	m_ProjectionMatrix = m_ProjectionMatrix * view;
+
 	temporaryShader.AddShader("res/shaders/basic.vs", ShaderType::VERTEX_SHADER);
 	temporaryShader.AddShader("res/shaders/basic.fs", ShaderType::FRAGMENT_SHADER);
 	temporaryShader.CreateShader();
 	temporaryShader.Bind();
+
+	InitializeScene();
 }
 
 void Scene::Update()
 {
 
+}
+
+void Scene::InitializeScene()
+{
+	cubes.push_back(new Cube({ 1.f, 1.f, -1.f }));
+	cubes.push_back(new Cube({ 1.f, 1.f, -1.f }));
+	cubes.push_back(new Cube({ 1.f, 1.f, -1.f }));
 }
 
 void Scene::HandleInput()
@@ -34,8 +49,8 @@ void Scene::Draw()
 {
 	temporaryShader.Bind();
 	temporaryShader.SetUniformMat4f("u_WorldMatrix", m_ProjectionMatrix);
-	Cube c;
-	c.Draw(&temporaryShader);
+	for (auto& cube : cubes)
+		cube->Draw(&temporaryShader);
 }
 
 void Scene::Run()
@@ -61,6 +76,7 @@ void Scene::Run()
 		GLCall(glfwSwapBuffers(m_Window));
 		GLCall(glfwPollEvents());
 	}
-
+	for (auto& cube : cubes)
+		delete cube;
 	glfwSetWindowShouldClose(m_Window, GLFW_TRUE);
 }

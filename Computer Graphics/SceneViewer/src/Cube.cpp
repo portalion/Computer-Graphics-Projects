@@ -40,7 +40,9 @@ const unsigned int Cube::m_Indices[] =
 };
 #pragma endregion
 
-Cube::Cube()
+Cube::Cube(glm::vec3 startingPos, float scale)
+    :m_ModelMatrix{ 1.f }, m_RotationMatrix{1.f}, 
+    m_ScaleMatrix{1.f}, m_TranslationMatrix{1.f}
 {
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);
@@ -56,6 +58,9 @@ Cube::Cube()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
     glEnableVertexAttribArray(0);
     glBindVertexArray(0);
+
+    SetPosition(startingPos);
+    SetScaling(scale);
 }
 
 Cube::~Cube()
@@ -65,9 +70,33 @@ Cube::~Cube()
     glDeleteVertexArrays(1, &m_VAO);
 }
 
+void Cube::SetPosition(glm::vec3 position)
+{
+    m_TranslationMatrix = glm::translate(glm::mat4(1.f), position);
+    UpdateModelMatrix();
+}
+
+void Cube::Move(glm::vec3 position)
+{
+    m_TranslationMatrix = glm::translate(m_TranslationMatrix, position);
+    UpdateModelMatrix();
+}
+
+void Cube::Scale(float scale)
+{
+    m_ScaleMatrix = glm::scale(m_ScaleMatrix, {scale, scale, scale});
+    UpdateModelMatrix();
+}
+
+void Cube::SetScaling(float scale)
+{
+    m_ScaleMatrix = glm::scale(glm::mat4(1.f), { scale, scale, scale });
+    UpdateModelMatrix();
+}
+
 void Cube::Draw(Shader* shader)
 {
-    shader->SetUniformMat4f("u_ModelMatrix", glm::rotate(glm::translate(glm::mat4(1.f), { 0.f, 0.f, -4.f }), glm::radians(30.f),{1.f, 1.f, 0.f}));
+    shader->SetUniformMat4f("u_ModelMatrix", m_ModelMatrix);
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
