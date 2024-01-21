@@ -27,6 +27,7 @@ DrawableEntity::DrawableEntity(glm::vec3 startingPos, float scale)
     :m_ModelMatrix{ 1.f }, m_RotationMatrix{ 1.f },
     m_ScaleMatrix{ 1.f }, m_TranslationMatrix{ 1.f }
 {
+    color = { 0.3f, 0.3f, 0.f };
     SetPosition(startingPos);
     SetScaling(scale);
     UpdateModelMatrix();
@@ -85,6 +86,7 @@ void DrawableEntity::Update(const float& deltaTime)
 void DrawableEntity::Draw(Shader* shader)
 {
     shader->SetUniformMat4f("u_ModelMatrix", m_ModelMatrix);
+    shader->SetUniformVec3f("u_Color", color);
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, m_ModelAsset->m_IndicesCount, GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);

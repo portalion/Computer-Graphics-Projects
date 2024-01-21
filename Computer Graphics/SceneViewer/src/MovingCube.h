@@ -4,9 +4,14 @@
 class MovingCube : public Cube
 {
 private:
-	const glm::vec3 velocity;
+	const float velocity = 40.f;
+	glm::vec3 position;
+	float angle;
+	const float radius = 10.f;
 public:
 	MovingCube(glm::vec3 startingPos = { 0.f, 0.f, 0.f }, float scale = 1.f);
 	void Update(const float& deltaTime)override;
+
+	inline virtual glm::vec3 GetPosition() const override { return position; }
 };
 

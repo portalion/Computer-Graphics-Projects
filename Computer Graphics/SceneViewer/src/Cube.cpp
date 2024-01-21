@@ -56,5 +56,6 @@ Cube::Cube(glm::vec3 startingPos, float scale)
     :DrawableEntity(startingPos, scale)
 {
     InitializeObject();
+    SetColor({ 0.f, 1.f, 0.f });
 }
 

@@ -10,8 +10,6 @@ int main(void)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
    
     GLFWwindow* window = glfwCreateWindow(static_cast<int>(Scene::ScreenSize.x), 
         static_cast<int>(Scene::ScreenSize.y), 
@@ -31,6 +29,8 @@ int main(void)
         std::cout << "GLEW ERROR" << std::endl;
 
     stbi_set_flip_vertically_on_load(true);
+
+    glEnable(GL_DEPTH_TEST);
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();

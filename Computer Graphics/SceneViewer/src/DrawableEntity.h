@@ -22,6 +22,8 @@ protected:
 	glm::mat4 m_ScaleMatrix;
 	glm::mat4 m_ModelMatrix;
 
+	glm::vec3 color;
+
 	virtual void InitializeModelAsset() = 0;
 	virtual void InitializeObject() sealed;
 
@@ -40,8 +42,10 @@ public:
 	void Rotate(glm::mat4 rotationMatrix);
 	void SetRotation(glm::mat4 rotationMatrix);
 	inline void SetModelMatrix(glm::mat4 modelMatrix) { m_ModelMatrix = modelMatrix; }
+	inline void SetColor(glm::vec3 color) { this->color = color; }
 
 	virtual void Update(const float& deltaTime);
+	inline virtual glm::vec3 GetPosition() const { return { 0.f, 0.f, 0.f }; }
 
 	void Draw(Shader* shader);
 };
