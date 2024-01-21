@@ -13,6 +13,7 @@ protected:
 public:
 	Camera(glm::vec3 position, glm::vec3 whereToLook);
 	virtual glm::mat4 GetViewMatrix();
+	inline glm::vec3 GetPosition() { return m_Position; }
 };
 
 

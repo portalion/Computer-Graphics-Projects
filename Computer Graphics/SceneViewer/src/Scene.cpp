@@ -10,13 +10,15 @@ const glm::vec2 Scene::ScreenSize = { 1000.f, 500.f };
 Scene::Scene(GLFWwindow* window)
 	:m_Running{ true }
 {
+	sun.position = { 0.f, 5.f, 0.f };
+	sun.color = { 1.f, 1.f, 1.f };
 	m_Window = window;
 
     m_ProjectionMatrix = glm::perspective(glm::radians(45.f), ScreenSize.x / ScreenSize.y, 0.1f, 100.f);
 	m_ViewMatrix = glm::mat4(1.f);
 
-	temporaryShader.AddShader("res/shaders/basic.vs", ShaderType::VERTEX_SHADER);
-	temporaryShader.AddShader("res/shaders/basic.fs", ShaderType::FRAGMENT_SHADER);
+	temporaryShader.AddShader("res/shaders/phongLight.vs", ShaderType::VERTEX_SHADER);
+	temporaryShader.AddShader("res/shaders/phongLight.fs", ShaderType::FRAGMENT_SHADER);
 	temporaryShader.CreateShader();
 	temporaryShader.Bind();
 
@@ -27,6 +29,8 @@ Scene::~Scene()
 {
 	for (auto& enitity : entities)
 		delete enitity;
+	for (auto& camera : cameras)
+		delete camera;
 }
 
 void Scene::Update(const float& deltaTime)
@@ -55,7 +59,7 @@ void Scene::InitializeScene()
 	entities.push_back(floor);
 
 	cameras.push_back(new Camera{ {10.f, 10.f, 30.f}, {0.f, 0.f, 0.f} });
-	cameras.push_back(new ObserverCamera{ movingCube, {10.f, 10.f, 30.f} });
+	cameras.push_back(new ObserverCamera{ movingCube, {-10.f, 10.f, -10.f} });
 	activeCameraIndex = 0;
 }
 
@@ -65,13 +69,16 @@ void Scene::HandleInput(ImGuiIO& io)
 		glfwSetWindowShouldClose(m_Window, GLFW_TRUE);
 	if (io.MouseClicked[0] && activeCameraIndex != -1)
 		activeCameraIndex = ++activeCameraIndex % cameras.size();
-	
 }
 
 void Scene::Draw()
 {
 	temporaryShader.Bind();
 	temporaryShader.SetUniformMat4f("u_WorldMatrix", m_ProjectionMatrix * m_ViewMatrix);
+	temporaryShader.SetUniformVec3f("lightPos", sun.position);
+	temporaryShader.SetUniformVec3f("viewPos", cameras[activeCameraIndex]->GetPosition());
+	temporaryShader.SetUniformVec3f("lightColor", sun.color);
+
 	for (auto& enitity : entities)
 		enitity->Draw(&temporaryShader);
 }

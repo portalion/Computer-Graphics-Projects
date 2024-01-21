@@ -10,6 +10,7 @@
 #include <vector>
 #include "DrawableEntity.h"
 #include "Shader.h"
+#include "LightningSource.h"
 #include "Camera.h"
 
 class Scene
@@ -18,15 +19,18 @@ private:
 	GLFWwindow* m_Window;
 	bool m_Running;
 
-	//TODO: change it
-	Shader temporaryShader;
-	std::vector<Camera*> cameras;
-	int activeCameraIndex;
-
 	glm::mat4 m_ProjectionMatrix;
 	glm::mat4 m_ViewMatrix;
 
+	//TODO: change it
+	Shader temporaryShader;
+
+	std::vector<Camera*> cameras;
+	int activeCameraIndex;
+
 	std::vector<DrawableEntity*> entities;
+
+	LightningSource sun;
 
 	void InitializeScene();
 

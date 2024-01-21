@@ -1393,7 +1393,9 @@
     <None Include="src\vendor\glm\gtx\wrap.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="res\shaders\basic.vs" />
-    <None Include="res\shaders\basic.fs" />
+    <None Include="res\shaders\noLight.vs" />
+    <None Include="res\shaders\noLight.fs" />
+    <None Include="res\shaders\phongLight.vs" />
+    <None Include="res\shaders\phongLight.fs" />
   </ItemGroup>
 </Project>

@@ -3,16 +3,16 @@
 #pragma region verticesDefinition
 const float Plane::m_Vertices[] =
 {
-    -1.0, -1.0,  1.0,
-     1.0, -1.0,  1.0,
-     1.0,  1.0,  1.0,
-    -1.0,  1.0,  1.0,
+    -1.0, -1.0,  1.0, 0.0, 0.0, -1.0,
+     1.0, -1.0,  1.0, 0.0, 0.0, -1.0,
+     1.0,  1.0,  1.0, 0.0, 0.0, -1.0,
+    -1.0,  1.0,  1.0, 0.0, 0.0, -1.0
 };
 
 const unsigned int Plane::m_Indices[] =
 {
     0, 1, 2,
-    2, 3, 0,
+    2, 3, 0
 };
 #pragma endregion
 
