@@ -10,7 +10,7 @@ const glm::vec2 Scene::ScreenSize = { 1000.f, 500.f };
 Scene::Scene(GLFWwindow* window)
 	:m_Running{ true }
 {
-	sun.position = { 0.f, 5.f, 0.f };
+	sun.position = { 0.f, 20.f, 0.f };
 	sun.color = { 1.f, 1.f, 1.f };
 	m_Window = window;
 
@@ -60,6 +60,7 @@ void Scene::InitializeScene()
 
 	cameras.push_back(new Camera{ {10.f, 10.f, 30.f}, {0.f, 0.f, 0.f} });
 	cameras.push_back(new ObserverCamera{ movingCube, {-10.f, 10.f, -10.f} });
+	cameras.push_back(new ObserverCamera{ movingCube, {0.f, 10.f, 0.f} });
 	activeCameraIndex = 0;
 }
 

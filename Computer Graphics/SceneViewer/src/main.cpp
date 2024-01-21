@@ -9,6 +9,7 @@ int main(void)
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
    
     GLFWwindow* window = glfwCreateWindow(static_cast<int>(Scene::ScreenSize.x), 
@@ -31,6 +32,7 @@ int main(void)
     stbi_set_flip_vertically_on_load(true);
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_MULTISAMPLE);
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();

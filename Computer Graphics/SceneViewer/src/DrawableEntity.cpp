@@ -15,9 +15,6 @@ void DrawableEntity::InitializeObject()
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     glBufferData(GL_ARRAY_BUFFER, m_ModelAsset->m_VerticesSize, m_ModelAsset->m_Vertices, GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_ModelAsset->m_IndicesSize, m_ModelAsset->m_Indices, GL_STATIC_DRAW);
-
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*) 0);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
@@ -90,6 +87,6 @@ void DrawableEntity::Draw(Shader* shader)
     shader->SetUniformMat4f("u_ModelMatrix", m_ModelMatrix);
     shader->SetUniformVec3f("u_Color", color);
     glBindVertexArray(m_VAO);
-    glDrawElements(GL_TRIANGLES, m_ModelAsset->m_IndicesCount, GL_UNSIGNED_INT, nullptr);
+    glDrawArrays(GL_TRIANGLES, 0, m_ModelAsset->m_VerticesCount);
     glBindVertexArray(0);
 }

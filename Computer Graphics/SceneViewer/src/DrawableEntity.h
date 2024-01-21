@@ -4,10 +4,8 @@
 struct ModelAsset
 {
 	const float* m_Vertices;
-	const unsigned int* m_Indices;
 	const unsigned int m_VerticesSize;
-	const unsigned int m_IndicesSize;
-	const unsigned int m_IndicesCount;
+	const unsigned int m_VerticesCount;
 };
 
 class DrawableEntity
