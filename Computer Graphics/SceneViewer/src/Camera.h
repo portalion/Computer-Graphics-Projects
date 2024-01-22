@@ -26,3 +26,13 @@ public:
 	glm::mat4 GetViewMatrix() override;
 	inline void BindEntity(DrawableEntity* toBind) { m_BindedEntity = toBind; }
 };
+
+class MovingCamera : public Camera
+{
+protected:
+	DrawableEntity* m_BindedEntity;
+public:
+	MovingCamera(DrawableEntity* EntityToBindInto);
+	glm::mat4 GetViewMatrix() override;
+	inline void BindEntity(DrawableEntity* toBind) { m_BindedEntity = toBind; }
+};

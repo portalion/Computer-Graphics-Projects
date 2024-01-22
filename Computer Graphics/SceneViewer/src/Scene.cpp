@@ -94,6 +94,7 @@ void Scene::InitializeScene()
 	cameras.push_back(new Camera{ {-10.f, 10.f, -10.f}, {0.f, 0.f, 0.f} });
 	cameras.push_back(new ObserverCamera{ movingCube, {-10.f, 10.f, -10.f} });
 	cameras.push_back(new ObserverCamera{ movingCube, {0.f, 10.f, 0.f} });
+	cameras.push_back(new MovingCamera{ movingCube });
 	activeCameraIndex = 0;
 }
 

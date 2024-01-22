@@ -44,6 +44,7 @@ public:
 
 	virtual void Update(const float& deltaTime);
 	inline virtual glm::vec3 GetPosition() const { return { 0.f, 0.f, 0.f }; }
+	inline virtual glm::vec3 GetLookingDirection() const { return { 0.f, 0.f, 0.f }; }
 
 	void Draw(Shader* shader);
 };
