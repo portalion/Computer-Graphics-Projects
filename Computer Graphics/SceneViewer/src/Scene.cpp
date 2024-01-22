@@ -3,6 +3,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 #include "MovingCube.h"
+#include "RotatingCube.h"
 #include "Plane.h"
 
 const glm::vec2 Scene::ScreenSize = { 1000.f, 500.f };
@@ -10,13 +11,12 @@ const glm::vec2 Scene::ScreenSize = { 1000.f, 500.f };
 Scene::Scene(GLFWwindow* window)
 	:m_Running{ true }
 {
-	sun.position = { 0.f, 20.f, 0.f };
-	sun.color = { 1.f, 1.f, 1.f };
 	m_Window = window;
 
     m_ProjectionMatrix = glm::perspective(glm::radians(45.f), ScreenSize.x / ScreenSize.y, 0.1f, 100.f);
 	m_ViewMatrix = glm::mat4(1.f);
 			
+	InitializeLightSources();
 	InitializeShaders();
 	InitializeScene();
 }
@@ -35,13 +35,19 @@ void Scene::InitializeShaders()
 	temporaryShader->AddShader("res/shaders/noLight.vs", ShaderType::VERTEX_SHADER);
 	temporaryShader->AddShader("res/shaders/noLight.fs", ShaderType::FRAGMENT_SHADER);
 	temporaryShader->CreateShader();
-	shaders.push_back(temporaryShader);
+	//shaders.push_back(temporaryShader);
 
 	temporaryShader = new Shader();
 	temporaryShader->AddShader("res/shaders/gouraudLight.vs", ShaderType::VERTEX_SHADER);
 	temporaryShader->AddShader("res/shaders/gouraudLight.fs", ShaderType::FRAGMENT_SHADER);
 	temporaryShader->CreateShader();
 	shaders.push_back(temporaryShader);
+}
+
+void Scene::InitializeLightSources()
+{
+	sun.position = { 10.f, 5.f, 0.f };
+	sun.color = { 1.f, 1.f, 1.f };
 }
 
 Scene::~Scene()
@@ -70,18 +76,22 @@ void Scene::InitializeScene()
 {
 	entities.push_back(new Cube({ 1.f, 1.f, -1.f }));
 
-	auto movingCube = new MovingCube({ 1.f, 5.f, -1.f });
+	auto movingCube = new MovingCube({ 1.f, 0.f, -1.f });
 	movingCube->Scale(0.3f);
 	entities.push_back(movingCube);
 
 	auto floor = new Plane({ 0.f, 0.f, 0.f });
 	glm::mat4 floorMatrix = glm::rotate(glm::mat4(1.f), glm::radians(90.f), { 1.f, 0.f, 0.f });
 	floorMatrix = glm::translate(floorMatrix, { 0.f, 0.f, 0.f });
-	floorMatrix = glm::scale(floorMatrix, { 100.f, 100.f, 1.f });
+	floorMatrix = glm::scale(floorMatrix, { 20.f, 20.f, 1.f });
 	floor->SetModelMatrix(floorMatrix);
 	entities.push_back(floor);
 
-	cameras.push_back(new Camera{ {10.f, 10.f, 30.f}, {0.f, 0.f, 0.f} });
+	auto rotatingObject = new RotatingCube({ 0.f, 0.f, 4.f }, 2.f);
+	entities.push_back(rotatingObject);
+
+	cameras.push_back(new Camera{ {10.f, 10.f, 10.f}, {0.f, 0.f, 0.f} });
+	cameras.push_back(new Camera{ {-10.f, 10.f, -10.f}, {0.f, 0.f, 0.f} });
 	cameras.push_back(new ObserverCamera{ movingCube, {-10.f, 10.f, -10.f} });
 	cameras.push_back(new ObserverCamera{ movingCube, {0.f, 10.f, 0.f} });
 	activeCameraIndex = 0;

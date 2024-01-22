@@ -35,7 +35,7 @@ private:
 	LightningSource sun;
 
 	void InitializeShaders();
-	void InitializeCameras();
+	void InitializeLightSources();
 	void InitializeScene();
 
 	void Update(const float& deltaTime);
