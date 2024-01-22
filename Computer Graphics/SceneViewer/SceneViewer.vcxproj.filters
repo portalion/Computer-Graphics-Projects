@@ -1397,5 +1397,7 @@
     <None Include="res\shaders\noLight.fs" />
     <None Include="res\shaders\phongLight.vs" />
     <None Include="res\shaders\phongLight.fs" />
+    <None Include="res\shaders\gouraudLight.vs" />
+    <None Include="res\shaders\gouraudLight.fs" />
   </ItemGroup>
 </Project>

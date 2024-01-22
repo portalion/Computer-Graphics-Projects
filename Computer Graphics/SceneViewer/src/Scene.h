@@ -8,6 +8,7 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include <vector>
+#include <unordered_map>
 #include "DrawableEntity.h"
 #include "Shader.h"
 #include "LightningSource.h"
@@ -22,16 +23,19 @@ private:
 	glm::mat4 m_ProjectionMatrix;
 	glm::mat4 m_ViewMatrix;
 
-	//TODO: change it
-	Shader temporaryShader;
+	int activeShaderIndex;
+	std::vector<Shader*> shaders;
 
-	std::vector<Camera*> cameras;
 	int activeCameraIndex;
+	std::vector<Camera*> cameras;
 
 	std::vector<DrawableEntity*> entities;
+	std::vector<LightningSource*> lightningSources;
 
 	LightningSource sun;
 
+	void InitializeShaders();
+	void InitializeCameras();
 	void InitializeScene();
 
 	void Update(const float& deltaTime);

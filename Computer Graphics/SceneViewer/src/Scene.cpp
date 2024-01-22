@@ -16,13 +16,32 @@ Scene::Scene(GLFWwindow* window)
 
     m_ProjectionMatrix = glm::perspective(glm::radians(45.f), ScreenSize.x / ScreenSize.y, 0.1f, 100.f);
 	m_ViewMatrix = glm::mat4(1.f);
-
-	temporaryShader.AddShader("res/shaders/phongLight.vs", ShaderType::VERTEX_SHADER);
-	temporaryShader.AddShader("res/shaders/phongLight.fs", ShaderType::FRAGMENT_SHADER);
-	temporaryShader.CreateShader();
-	temporaryShader.Bind();
-
+			
+	InitializeShaders();
 	InitializeScene();
+}
+
+void Scene::InitializeShaders()
+{
+	activeShaderIndex = 0;
+
+	Shader* temporaryShader = new Shader();
+	temporaryShader->AddShader("res/shaders/phongLight.vs", ShaderType::VERTEX_SHADER);
+	temporaryShader->AddShader("res/shaders/phongLight.fs", ShaderType::FRAGMENT_SHADER);
+	temporaryShader->CreateShader();
+	shaders.push_back(temporaryShader);
+
+	temporaryShader = new Shader();
+	temporaryShader->AddShader("res/shaders/noLight.vs", ShaderType::VERTEX_SHADER);
+	temporaryShader->AddShader("res/shaders/noLight.fs", ShaderType::FRAGMENT_SHADER);
+	temporaryShader->CreateShader();
+	shaders.push_back(temporaryShader);
+
+	temporaryShader = new Shader();
+	temporaryShader->AddShader("res/shaders/gouraudLight.vs", ShaderType::VERTEX_SHADER);
+	temporaryShader->AddShader("res/shaders/gouraudLight.fs", ShaderType::FRAGMENT_SHADER);
+	temporaryShader->CreateShader();
+	shaders.push_back(temporaryShader);
 }
 
 Scene::~Scene()
@@ -31,6 +50,10 @@ Scene::~Scene()
 		delete enitity;
 	for (auto& camera : cameras)
 		delete camera;
+	for (auto& shader : shaders)
+		delete shader;
+	for (auto& lightSource : lightningSources)
+		delete lightSource;
 }
 
 void Scene::Update(const float& deltaTime)
@@ -66,22 +89,26 @@ void Scene::InitializeScene()
 
 void Scene::HandleInput(ImGuiIO& io)
 {
+	
 	if (glfwGetKey(m_Window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(m_Window, GLFW_TRUE);
 	if (io.MouseClicked[0] && activeCameraIndex != -1)
 		activeCameraIndex = ++activeCameraIndex % cameras.size();
+	if (ImGui::IsKeyPressed(ImGuiKey_S, false) && activeShaderIndex != -1)
+		activeShaderIndex = ++activeShaderIndex % shaders.size();
 }
 
 void Scene::Draw()
 {
-	temporaryShader.Bind();
-	temporaryShader.SetUniformMat4f("u_WorldMatrix", m_ProjectionMatrix * m_ViewMatrix);
-	temporaryShader.SetUniformVec3f("lightPos", sun.position);
-	temporaryShader.SetUniformVec3f("viewPos", cameras[activeCameraIndex]->GetPosition());
-	temporaryShader.SetUniformVec3f("lightColor", sun.color);
+	Shader* activeShader = shaders[activeShaderIndex];
+	activeShader->Bind();
+	activeShader->SetUniformMat4f("u_WorldMatrix", m_ProjectionMatrix * m_ViewMatrix);
+	activeShader->SetUniformVec3f("lightPos", sun.position);
+	activeShader->SetUniformVec3f("viewPos", cameras[activeCameraIndex]->GetPosition());
+	activeShader->SetUniformVec3f("lightColor", sun.color);
 
 	for (auto& enitity : entities)
-		enitity->Draw(&temporaryShader);
+		enitity->Draw(activeShader);
 }
 
 void Scene::Run()
