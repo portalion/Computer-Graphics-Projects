@@ -14,6 +14,7 @@
 #include "LightningSource.h"
 #include "Camera.h"
 
+#include "Sphere.h"
 class Scene
 {
 private:
@@ -33,6 +34,7 @@ private:
 	std::vector<LightningSource*> lightningSources;
 
 	LightningSource sun;
+	Sphere s;
 
 	void InitializeShaders();
 	void InitializeLightSources();

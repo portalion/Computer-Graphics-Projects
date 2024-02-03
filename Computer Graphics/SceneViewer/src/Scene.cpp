@@ -5,6 +5,7 @@
 #include "MovingCube.h"
 #include "RotatingCube.h"
 #include "Plane.h"
+#include "Sphere.h"	
 
 const glm::vec2 Scene::ScreenSize = { 1000.f, 500.f };
 
@@ -35,7 +36,7 @@ void Scene::InitializeShaders()
 	temporaryShader->AddShader("res/shaders/noLight.vs", ShaderType::VERTEX_SHADER);
 	temporaryShader->AddShader("res/shaders/noLight.fs", ShaderType::FRAGMENT_SHADER);
 	temporaryShader->CreateShader();
-	//shaders.push_back(temporaryShader);
+	shaders.push_back(temporaryShader);
 
 	temporaryShader = new Shader();
 	temporaryShader->AddShader("res/shaders/gouraudLight.vs", ShaderType::VERTEX_SHADER);
@@ -120,6 +121,7 @@ void Scene::Draw()
 
 	for (auto& enitity : entities)
 		enitity->Draw(activeShader);
+	s.Draw();
 }
 
 void Scene::Run()
