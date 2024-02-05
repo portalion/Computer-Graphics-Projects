@@ -11,7 +11,7 @@ uniform mat4 u_WorldMatrix;
 void main()
 {
     FragPos = vec3(u_ModelMatrix * vec4(aPos, 1.0));
-    Normal = mat3(transpose(inverse(u_ModelMatrix))) * aNormal;  
+    Normal = normalize(mat3(transpose(inverse(u_ModelMatrix))) * aNormal);  
     
     gl_Position = u_WorldMatrix * vec4(FragPos, 1.0);
 }

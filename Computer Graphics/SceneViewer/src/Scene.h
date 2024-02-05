@@ -34,6 +34,7 @@ private:
 	std::vector<LightningSource*> lightningSources;
 
 	LightningSource sun;
+	LightningSource sun2;
 	Sphere s;
 
 	void InitializeShaders();

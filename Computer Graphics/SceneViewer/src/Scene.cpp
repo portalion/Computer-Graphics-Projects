@@ -49,6 +49,8 @@ void Scene::InitializeLightSources()
 {
 	sun.position = { 10.f, 5.f, 0.f };
 	sun.color = { 1.f, 1.f, 1.f };
+	sun2.position = { -10.f, 5.f, 0.f };
+	sun2.color = { 1.f, 1.f, 1.f };
 }
 
 Scene::~Scene()
@@ -115,9 +117,14 @@ void Scene::Draw()
 	Shader* activeShader = shaders[activeShaderIndex];
 	activeShader->Bind();
 	activeShader->SetUniformMat4f("u_WorldMatrix", m_ProjectionMatrix * m_ViewMatrix);
-	activeShader->SetUniformVec3f("lightPos", sun.position);
 	activeShader->SetUniformVec3f("viewPos", cameras[activeCameraIndex]->GetPosition());
-	activeShader->SetUniformVec3f("lightColor", sun.color);
+	activeShader->SetUniformVec3f("pointLight[0].position", sun.position);
+	activeShader->SetUniformVec3f("pointLight[0].color", sun.color);
+	activeShader->SetUniformVec3f("pointLight[1].position", sun2.position);
+	activeShader->SetUniformVec3f("pointLight[1].color", sun2.color);
+	activeShader->SetUniformVec3f("spotlight.position", static_cast<MovingCube*>(entities[1])->GetPosition());
+	activeShader->SetUniformVec3f("spotlight.direction", static_cast<MovingCube*>(entities[1])->GetLookingDirection() - static_cast<MovingCube*>(entities[1])->GetPosition());
+	activeShader->SetUniformVec3f("spotlight.color", {1.f, 1.f, 1.f});
 
 	for (auto& enitity : entities)
 		enitity->Draw(activeShader);
