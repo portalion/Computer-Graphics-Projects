@@ -1,25 +1,24 @@
-# User manual
+# User Manual
 
-## Kompilacja
-Używana jest biblioteka ImGui, glm, glfw, oraz glew.
-biblioteka ImGui oraz glm rozpakowana jest do folderu src/vendor,
-natomiast GLFW oraz GLEW dodane są do dependencji projektu.
+## Compilation  
+The ImGui, glm, glfw, and glew libraries are used.  
+The ImGui and glm libraries are unpacked into the `src/vendor` folder, while GLFW and GLEW are added as project dependencies.
 
-## Aktywny wielokąt
-W trakcie korzystania z programu aktywny wielokąt jest wybierany na podstawie aktywnej karty wielokątów w menu (dodawanie i usuwanie wielokątów też jest zrobione na ich podstawie)
+## Active Polygon  
+While using the program, the active polygon is selected based on the active polygon tab in the menu (adding and removing polygons is also done based on these tabs).
 
-## Tryby wielokątów
-Każdy wielokąt ma 2 możliwe tryby, tryb edytowania odpowiada za wszystkie możliwe operacje, natomiast tryb dodawania pozwala jedynie na dodawanie wierzchołków.
+## Polygon Modes  
+Each polygon has 2 possible modes: the editing mode, which allows all operations, and the adding mode, which only allows adding vertices.
 
-Tryb wielokąta można zmienić w menu głównym.
+The polygon mode can be changed in the main menu.
 
-### Tryb dodawania
-W trybie dodawania jedyną możliwą operacją na płótnie jest operacja dodawania wierzchołków za pomocą kliknięcia lewego przycisku myszy.
+### Add Mode  
+In add mode, the only possible operation on the canvas is adding vertices by left-clicking.
 
-### Tryb edycji
-W trybie edycji możemy:
-- Dodawać nowy wierzchołek (od aktywnego) podwójnym kliknięciem lewego przycisku myszy
-- Aktywować wierzchołek klikając na niego lewym przyciskiem myszy
-- Przesuwać wierzchołki i linie przytrzymując lewy przycisk myszy
-- Przesuwać aktywny wielokąt przytrzymując lewy przycisk myszy oraz klawisz shift
-- Dodawać relację do krawędzi przy pomocy menu kontekstowego kilkając prawy przycisk myszy na wybranej krawędzi
+### Edit Mode  
+In edit mode, you can:
+- Add a new vertex (from the active one) by double-clicking the left mouse button
+- Activate a vertex by left-clicking on it
+- Move vertices and edges by holding the left mouse button
+- Move the active polygon by holding the left mouse button and the Shift key
+- Add a relationship to an edge through the context menu by right-clicking on the selected edge
